@@ -1,8 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search as SearchIcon, SlidersHorizontal, X, ChevronDown, MapPin, Star } from 'lucide-react';
+import { Search as SearchIcon, SlidersHorizontal, X } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import MerchantCard from '../components/MerchantCard';
 import { merchants, categories } from '../data/data';
+
+const categoryIcons = {
+  kuliner: 'mdi:silverware-fork-knife',
+  otomotif: 'mdi:car-wrench',
+  teknologi: 'mdi:laptop',
+  fashion: 'mdi:tshirt-crew',
+  kesehatan: 'mdi:hospital-box',
+  pendidikan: 'mdi:book-education',
+  jasa: 'mdi:toolbox-outline',
+  hiburan: 'mdi:music-circle',
+};
 
 export default function Search() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -68,7 +80,7 @@ export default function Search() {
             <button
               type="button"
               onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all ${showFilters ? 'bg-primary-600 text-white border-primary-600' : 'bg-white text-slate-700 border-surface-200 hover:border-primary-300'}`}
+              className={`hidden items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all ${showFilters ? 'bg-primary-600 text-white border-primary-600' : 'bg-white text-slate-700 border-surface-200 hover:border-primary-300'}`}
             >
               <SlidersHorizontal className="w-4 h-4" />
               <span className="hidden sm:inline">Filter</span>
@@ -138,7 +150,8 @@ export default function Search() {
                         selectedCat === cat.id ? 'bg-primary-50 text-primary-700 font-medium' : 'text-slate-600 hover:bg-surface-50'
                       }`}
                     >
-                      <span>{cat.icon}</span> {cat.label}
+                      <Icon icon={categoryIcons[cat.id] || 'mdi:shape-outline'} className="w-4 h-4 shrink-0" />
+                      <span>{cat.label}</span>
                     </button>
                   ))}
                 </div>
