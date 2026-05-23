@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, User, ChevronRight, Eye, EyeOff, Sparkles, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, User, ChevronRight, Eye, EyeOff, Sparkles, ArrowLeft, Shield, Zap, TrendingUp } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Auth() {
@@ -18,61 +18,73 @@ export default function Auth() {
     e.preventDefault();
     setLoading(true);
     await new Promise((r) => setTimeout(r, 800));
-    login(email, password, role);
+    login(email, password, tab === 'login' ? 'merchant' : role);
     setLoading(false);
-    navigate(role === 'admin' ? '/dashboard/admin' : '/dashboard/merchant');
+    navigate('/dashboard/merchant');
   };
 
   const features = [
-    '✦ 10.000+ Bisnis Terdaftar',
-    '✦ Dashboard Analytics Bisnis',
-    '✦ AI Review Summarizer',
-    '✦ Chat & Nego via WhatsApp',
+    { icon: Shield, text: '10.000+ Bisnis Terdaftar' },
+    { icon: TrendingUp, text: 'Dashboard Analytics Bisnis' },
+    { icon: Sparkles, text: 'AI Review Summarizer' },
+    { icon: Zap, text: 'Chat & Nego via WhatsApp' },
   ];
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left Panel */}
-      <div className="hidden lg:flex w-1/2 bg-hero-gradient flex-col justify-between p-12 relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-0 right-0 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-72 h-72 bg-indigo-500/20 rounded-full blur-3xl" />
-        </div>
+    <div className="h-screen flex overflow-hidden">
+      {/* ── Left Panel — STATIC, never moves ── */}
+      <div className="hidden lg:block w-1/2 bg-hero-gradient relative overflow-hidden">
+        {/* Decorative blobs */}
+        <div className="absolute top-0 right-0 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-indigo-500/20 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/4 w-48 h-48 bg-blue-400/10 rounded-full blur-3xl" />
 
-        <div className="relative z-10">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center font-black text-white text-sm">G</div>
-            <span className="font-extrabold text-xl text-white">Goleet<span className="text-white/60">.id</span></span>
-          </Link>
-        </div>
-
-        <div className="relative z-10">
-          <div className="w-14 h-14 rounded-3xl bg-white/10 flex items-center justify-center mb-8">
-            <Sparkles className="w-8 h-8 text-amber-300" />
+        {/* Content — absolutely positioned so it never shifts */}
+        <div className="absolute inset-0 flex flex-col p-12">
+          {/* Logo */}
+          <div className="flex-shrink-0">
+            <Link to="/" className="inline-flex items-center gap-2">
+              <span className="font-extrabold text-2xl text-white tracking-tight">
+                Goleet<span className="text-white/60">.id</span>
+              </span>
+            </Link>
           </div>
-          <h2 className="text-3xl font-black text-white mb-4 leading-tight">
-            Platform Bisnis Lokal<br />Terpercaya di Banyumas
-          </h2>
-          <p className="text-blue-100 mb-8 leading-relaxed">
-            Bergabunglah dengan ribuan pemilik bisnis yang sudah mengembangkan usaha mereka bersama Goleet.id.
-          </p>
-          <ul className="space-y-3">
-            {features.map((f) => (
-              <li key={f} className="flex items-center gap-3 text-white/90 text-sm">
-                <span className="text-amber-300 font-bold">{f.split(' ')[0]}</span>
-                <span>{f.substring(f.indexOf(' ') + 1)}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
 
-        <div className="relative z-10">
-          <p className="text-white/40 text-xs">© 2026 Goleet.id</p>
+          {/* Main content — centered */}
+          <div className="flex-1 flex flex-col justify-center">
+            <div className="w-14 h-14 rounded-3xl bg-white/10 backdrop-blur-sm flex items-center justify-center mb-8 border border-white/20">
+              <Sparkles className="w-8 h-8 text-amber-300" />
+            </div>
+            <h2 className="text-4xl font-black text-white mb-4 leading-tight">
+              Platform Bisnis Lokal<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-200">
+                Terpercaya di Purbalingga
+              </span>
+            </h2>
+            <p className="text-blue-100 mb-10 leading-relaxed text-base">
+              Bergabunglah dengan ribuan pemilik bisnis yang sudah mengembangkan usaha mereka bersama Goleet.id.
+            </p>
+            <ul className="space-y-4">
+              {features.map(({ icon: Icon, text }) => (
+                <li key={text} className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-4 h-4 text-amber-300" />
+                  </div>
+                  <span className="text-white/90 text-sm font-medium">{text}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Footer */}
+          <div className="flex-shrink-0">
+            <p className="text-white/30 text-xs">© 2026 Goleet.id — All rights reserved.</p>
+          </div>
         </div>
       </div>
 
-      {/* Right Panel */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-surface-50">
+      {/* ── Right Panel ── */}
+      <div className="flex-1 flex items-start justify-center pt-16 px-6 sm:px-12 pb-12 bg-surface-50 overflow-y-auto">
         <div className="w-full max-w-md">
           <Link to="/" className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-primary-600 mb-8 transition-colors">
             <ArrowLeft className="w-4 h-4" /> Kembali ke Beranda
@@ -104,6 +116,7 @@ export default function Auth() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Nama — hanya di register */}
             {tab === 'register' && (
               <div>
                 <label className="label-base" htmlFor="auth-name">Nama Lengkap</label>
@@ -122,6 +135,7 @@ export default function Auth() {
               </div>
             )}
 
+            {/* Email */}
             <div>
               <label className="label-base" htmlFor="auth-email">Email</label>
               <div className="relative">
@@ -138,6 +152,7 @@ export default function Auth() {
               </div>
             </div>
 
+            {/* Password */}
             <div>
               <label className="label-base" htmlFor="auth-password">Password</label>
               <div className="relative">
@@ -161,24 +176,28 @@ export default function Auth() {
               </div>
             </div>
 
-            {/* Role selector */}
-            <div>
-              <label className="label-base" htmlFor="auth-role">Masuk sebagai</label>
-              <select
-                id="auth-role"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                className="input-base"
-              >
-                <option value="merchant">Pemilik Bisnis / Merchant</option>
-                <option value="admin">Super Admin</option>
-                <option value="user">Pengguna Umum</option>
-              </select>
-            </div>
+            {/* Role selector — hanya di register */}
+            {tab === 'register' && (
+              <div>
+                <label className="label-base" htmlFor="auth-role">Daftar sebagai</label>
+                <select
+                  id="auth-role"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="input-base"
+                >
+                  <option value="merchant">Pemilik Bisnis / Merchant</option>
+                  <option value="user">Pengguna Umum</option>
+                </select>
+              </div>
+            )}
 
+            {/* Lupa password — hanya di login */}
             {tab === 'login' && (
               <div className="flex justify-end">
-                <button type="button" className="text-sm text-primary-600 hover:text-primary-800">Lupa password?</button>
+                <button type="button" className="text-sm text-primary-600 hover:text-primary-800">
+                  Lupa password?
+                </button>
               </div>
             )}
 

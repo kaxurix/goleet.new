@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink, useNavigate, Outlet } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Star, BarChart2, Settings, LogOut,
   Menu, X, Bell, ChevronDown
@@ -7,17 +7,17 @@ import {
 import { useAuth } from '../context/AuthContext';
 
 const merchantNavItems = [
-  { label: 'Overview', to: '/dashboard/merchant', icon: LayoutDashboard, exact: true },
-  { label: 'Ulasan', to: '/dashboard/merchant/reviews', icon: Star },
-  { label: 'Analitik', to: '/dashboard/merchant/analytics', icon: BarChart2 },
-  { label: 'Pengaturan', to: '/dashboard/merchant/settings', icon: Settings },
+  { label: 'Overview',   sectionId: 'merchant-overview',  icon: LayoutDashboard },
+  { label: 'Ulasan',     sectionId: 'merchant-reviews',   icon: Star },
+  { label: 'Analitik',  sectionId: 'merchant-analytics', icon: BarChart2 },
+  { label: 'Pengaturan',sectionId: 'merchant-settings',  icon: Settings },
 ];
 
 const adminNavItems = [
-  { label: 'Overview', to: '/dashboard/admin', icon: LayoutDashboard, exact: true },
-  { label: 'Verifikasi', to: '/dashboard/admin/verify', icon: Star },
-  { label: 'Analitik', to: '/dashboard/admin/analytics', icon: BarChart2 },
-  { label: 'Pengaturan', to: '/dashboard/admin/settings', icon: Settings },
+  { label: 'Overview',   sectionId: 'admin-overview',    icon: LayoutDashboard },
+  { label: 'Analitik',  sectionId: 'admin-analytics',   icon: BarChart2 },
+  { label: 'Verifikasi', sectionId: 'admin-verify',      icon: Star },
+  { label: 'Pengaturan',sectionId: 'admin-settings',    icon: Settings },
 ];
 
 export default function DashboardLayout({ variant = 'merchant', children }) {
@@ -50,34 +50,32 @@ export default function DashboardLayout({ variant = 'merchant', children }) {
     <div className="flex flex-col h-full">
       {/* Logo */}
       <div className={`flex items-center gap-3 px-5 h-16 border-b ${isAdmin ? 'border-slate-800' : 'border-surface-200'} flex-shrink-0`}>
-        <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-white text-sm flex-shrink-0 ${isAdmin ? 'bg-primary-600' : 'bg-primary-600'}`}>
-          G
-        </div>
         {!collapsed && (
           <span className={`font-extrabold text-lg tracking-tight ${logoText}`}>
             Goleet<span className={isAdmin ? 'text-slate-500' : 'text-primary-400'}>.id</span>
           </span>
         )}
+        {collapsed && (
+          <span className={`font-extrabold text-base ${logoText}`}>G</span>
+        )}
       </div>
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {navItems.map(({ label, to, icon: Icon, exact }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={exact}
-            onClick={() => setMobileOpen(false)}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
-                isActive ? activeCls : inactiveCls
-              } ${collapsed ? 'justify-center' : ''}`
-            }
+        {navItems.map(({ label, sectionId, icon: Icon }) => (
+          <button
+            key={sectionId}
+            onClick={() => {
+              setMobileOpen(false);
+              const el = document.getElementById(sectionId);
+              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+            className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${inactiveCls} ${collapsed ? 'justify-center' : ''}`}
             title={collapsed ? label : undefined}
           >
-            <Icon className="w-4.5 h-4.5 flex-shrink-0" size={18} />
+            <Icon className="flex-shrink-0" size={18} />
             {!collapsed && <span>{label}</span>}
-          </NavLink>
+          </button>
         ))}
       </nav>
 

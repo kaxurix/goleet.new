@@ -219,7 +219,7 @@ export default function MerchantDashboard() {
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div id="merchant-overview" className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <StatCard icon={Eye} label="Lihat Profil (30 hari)" value="2.847" trend="up" trendValue="+12%" color="primary" />
           <StatCard icon={MessageCircle} label="Klik WhatsApp" value="184" trend="up" trendValue="+8%" color="green" />
           <StatCard icon={Star} label="Total Ulasan" value={merchant.reviewCount} trend="up" trendValue="+6 baru" color="amber" />
@@ -229,13 +229,13 @@ export default function MerchantDashboard() {
         {/* Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left col - AI + recent reviews */}
-          <div className="lg:col-span-2 space-y-6">
+          <div id="merchant-reviews" className="lg:col-span-2 space-y-6">
             <AIInsightBox />
             <RecentReviewsCard merchantReviews={merchantReviews} />
           </div>
 
           {/* Right col - chart + quick actions */}
-          <div className="space-y-6">
+          <div id="merchant-analytics" className="space-y-6">
             <SentimentChart />
             <QuickActions />
 
@@ -272,6 +272,12 @@ export default function MerchantDashboard() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Settings placeholder */}
+        <div id="merchant-settings" className="mt-8 card p-6">
+          <h3 className="font-bold text-slate-900 mb-2">Pengaturan Akun</h3>
+          <p className="text-sm text-slate-500">Kelola informasi bisnis dan preferensi akun Anda — segera hadir.</p>
         </div>
       </div>
     </DashboardLayout>

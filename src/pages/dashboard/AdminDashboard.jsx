@@ -246,7 +246,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div id="admin-overview" className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <AdminStatCard
             icon={Users}
             label="Total Pengguna"
@@ -278,7 +278,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div id="admin-analytics" className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <div className="lg:col-span-2">
             <RevenueChart />
           </div>
@@ -288,7 +288,15 @@ export default function AdminDashboard() {
         </div>
 
         {/* Verification Queue */}
-        <VerificationTable />
+        <div id="admin-verify">
+          <VerificationTable />
+        </div>
+
+        {/* Settings placeholder */}
+        <div id="admin-settings" className="mt-8 card p-6">
+          <h3 className="font-bold text-slate-900 mb-2">Pengaturan Platform</h3>
+          <p className="text-sm text-slate-500">Konfigurasi platform Goleet.id — segera hadir.</p>
+        </div>
       </div>
     </DashboardLayout>
   );

@@ -45,6 +45,7 @@ function AppRoutes() {
       {/* Dashboard Routes */}
       <Route path="/dashboard/merchant" element={<ProtectedMerchant />} />
       <Route path="/dashboard/admin" element={<ProtectedAdmin />} />
+      <Route path="/admin" element={<ProtectedAdmin />} />
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
