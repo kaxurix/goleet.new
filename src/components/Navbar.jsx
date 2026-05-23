@@ -31,6 +31,7 @@ export default function Navbar() {
   const navLinks = [
     { label: 'Beranda', to: '/' },
     { label: 'Cari Bisnis', to: '/search' },
+    { label: 'Pricing', to: '/pricing' },
     { label: 'Daftarkan Bisnis', to: '/claim' },
   ];
 

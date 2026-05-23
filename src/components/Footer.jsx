@@ -12,7 +12,7 @@ export default function Footer() {
   const businessLinks = [
     { label: 'Klaim Bisnis', to: '/claim' },
     { label: 'Dashboard Merchant', to: '/dashboard/merchant' },
-    { label: 'Paket & Harga', to: '/claim' },
+    { label: 'Paket & Harga', to: '/pricing' },
     { label: 'Panduan Verifikasi', to: '/claim' },
   ];
 

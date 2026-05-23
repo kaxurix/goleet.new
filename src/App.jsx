@@ -6,6 +6,7 @@ import Search from './pages/Search';
 import MerchantDetail from './pages/MerchantDetail';
 import Claim from './pages/Claim';
 import Auth from './pages/Auth';
+import Pricing from './pages/Pricing';
 import MerchantDashboard from './pages/dashboard/MerchantDashboard';
 import AdminDashboard from './pages/dashboard/AdminDashboard';
 
@@ -35,6 +36,7 @@ function AppRoutes() {
         <Route path="/search" element={<Search />} />
         <Route path="/merchant/:id" element={<MerchantDetail />} />
         <Route path="/claim" element={<Claim />} />
+        <Route path="/pricing" element={<Pricing />} />
       </Route>
 
       {/* Auth - no shared layout */}
