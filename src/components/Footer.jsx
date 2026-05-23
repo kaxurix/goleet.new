@@ -23,13 +23,12 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-9 h-9 rounded-xl bg-primary-600 flex items-center justify-center font-black text-white text-sm">G</div>
-              <span className="font-extrabold text-xl text-white tracking-tight">
+              <span className="font-extrabold text-2xl text-white tracking-tight">
                 Goleet<span className="text-primary-400">.id</span>
               </span>
             </Link>
             <p className="text-sm leading-relaxed text-slate-400 mb-6">
-              Platform direktori bisnis lokal dan B2B SaaS untuk UMKM di Banyumas & sekitarnya. Temukan, hubungi, dan tumbuh bersama.
+              Platform direktori bisnis lokal dan B2B SaaS untuk UMKM di Purbalingga & sekitarnya. Temukan, hubungi, dan tumbuh bersama.
             </p>
             <div className="flex gap-3">
               {[
@@ -89,7 +88,7 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-primary-400 mt-0.5 flex-shrink-0" />
-                <span className="text-sm text-slate-400">Jl. HR. Bunyamin No. 993, Purwokerto, Banyumas 53122</span>
+                <span className="text-sm text-slate-400">Jl. HR. Bunyamin No. 993, Purwokerto, Purbalingga 53122</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-primary-400 flex-shrink-0" />
@@ -110,7 +109,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-xs text-slate-500">
-            © 2026 Goleet.id — Platform UMKM Lokal Banyumas. Semua hak dilindungi.
+            © 2026 Goleet.id — Platform UMKM Lokal Purbalingga. Semua hak dilindungi.
           </p>
           <div className="flex gap-6">
             <a href="#" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">Privasi</a>

@@ -3,14 +3,14 @@
 // ============================================================
 
 export const categories = [
-  { id: 'kuliner', label: 'Kuliner', icon: '🍜', color: 'bg-orange-100 text-orange-700' },
-  { id: 'otomotif', label: 'Otomotif', icon: '🔧', color: 'bg-blue-100 text-blue-700' },
-  { id: 'teknologi', label: 'Teknologi', icon: '💻', color: 'bg-indigo-100 text-indigo-700' },
-  { id: 'fashion', label: 'Fashion', icon: '👗', color: 'bg-pink-100 text-pink-700' },
-  { id: 'kesehatan', label: 'Kesehatan', icon: '🏥', color: 'bg-green-100 text-green-700' },
-  { id: 'pendidikan', label: 'Pendidikan', icon: '📚', color: 'bg-yellow-100 text-yellow-700' },
-  { id: 'jasa', label: 'Jasa Umum', icon: '🛠️', color: 'bg-slate-100 text-slate-700' },
-  { id: 'hiburan', label: 'Hiburan', icon: '🎵', color: 'bg-purple-100 text-purple-700' },
+  { id: 'kuliner', label: 'Kuliner', icon: '🍜', color: 'bg-orange-100 text-orange-700', gradient: 'from-orange-400 to-amber-500' },
+  { id: 'otomotif', label: 'Otomotif', icon: '🔧', color: 'bg-blue-100 text-blue-700', gradient: 'from-blue-400 to-cyan-500' },
+  { id: 'teknologi', label: 'Teknologi', icon: '💻', color: 'bg-indigo-100 text-indigo-700', gradient: 'from-indigo-400 to-violet-500' },
+  { id: 'fashion', label: 'Fashion', icon: '👗', color: 'bg-pink-100 text-pink-700', gradient: 'from-pink-400 to-rose-500' },
+  { id: 'kesehatan', label: 'Kesehatan', icon: '🏥', color: 'bg-green-100 text-green-700', gradient: 'from-green-400 to-emerald-500' },
+  { id: 'pendidikan', label: 'Pendidikan', icon: '📚', color: 'bg-yellow-100 text-yellow-700', gradient: 'from-yellow-400 to-orange-400' },
+  { id: 'jasa', label: 'Jasa Umum', icon: '🛠️', color: 'bg-slate-100 text-slate-700', gradient: 'from-slate-400 to-gray-500' },
+  { id: 'hiburan', label: 'Hiburan', icon: '🎵', color: 'bg-purple-100 text-purple-700', gradient: 'from-purple-400 to-fuchsia-500' },
 ];
 
 export const merchants = [
@@ -45,7 +45,7 @@ export const merchants = [
     name: 'Soto Bancar Pak Juki',
     category: 'kuliner',
     categoryLabel: 'Kuliner',
-    address: 'Pasar Wage Banyumas, Kios B-14',
+    address: 'Pasar Wage Purbalingga, Kios B-14',
     distance: '1.2 km',
     rating: 4.9,
     reviewCount: 312,
@@ -56,7 +56,7 @@ export const merchants = [
     tags: ['Soto', 'Sarapan', 'Halal', 'Buka Pagi'],
     verified: true,
     premium: false,
-    description: 'Soto Bancar legendaris sejak 1987 dengan kuah bening segar, irisan daging sapi pilihan, dan taburan bawang goreng khas Banyumas.',
+    description: 'Soto Bancar legendaris sejak 1987 dengan kuah bening segar, irisan daging sapi pilihan, dan taburan bawang goreng khas Purbalingga.',
     aiSummary: 'Ulasan pelanggan memuji cita rasa autentik yang konsisten selama puluhan tahun. Banyak yang menjadikan tempat ini destinasi wajib saat ke Banyumas. Porsi dinilai memuaskan dan harga sangat terjangkau. Direkomendasikan datang sebelum jam 9 pagi karena sering habis.',
     openHours: 'Senin–Minggu: 05.30–11.00',
     photos: [
@@ -105,7 +105,7 @@ export const merchants = [
     tags: ['Batik Tulis', 'Batik Cap', 'Kain', 'Seragam'],
     verified: true,
     premium: false,
-    description: 'Pengrajin batik khas Banyumas dengan motif tradisional dan kontemporer. Menerima pesanan seragam instansi dan souvenir pernikahan.',
+    description: 'Pengrajin batik khas Purbalingga dengan motif tradisional dan kontemporer. Menerima pesanan seragam instansi dan souvenir pernikahan.',
     aiSummary: 'Pelanggan memuji keindahan motif dan kualitas kain yang awet. Banyak instansi pemerintah dan sekolah menjadi pelanggan tetap. Proses pembuatan batik tulis dinilai transparan dan edukatif. Harga bervariasi sesuai kerumitan motif.',
     openHours: 'Senin–Sabtu: 09.00–17.00',
     photos: [
@@ -291,7 +291,7 @@ export const banners = [
   {
     id: 'b1',
     title: 'Braling Music Festival 2026',
-    subtitle: 'Hajatan Musik Terbesar di Banyumas — 28 Juni 2026',
+    subtitle: 'Hajatan Musik Terbesar di Purbalingga — 28 Juni 2026',
     cta: 'Info Tiket',
     bg: 'from-purple-600 via-indigo-600 to-blue-600',
     image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1200&q=80',
@@ -307,7 +307,7 @@ export const banners = [
   {
     id: 'b3',
     title: 'Goleet UMKM Expo 2026',
-    subtitle: 'Pameran produk lokal Banyumas — 5–7 Juli 2026 di GOR Soesilo',
+    subtitle: 'Pameran produk lokal Purbalingga — 5–7 Juli 2026 di GOR Soesilo',
     cta: 'Daftar Peserta',
     bg: 'from-orange-500 via-rose-500 to-pink-600',
     image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&q=80',

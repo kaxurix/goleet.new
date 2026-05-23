@@ -49,10 +49,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-sm ${isLanding && !scrolled ? 'bg-white/20' : 'bg-primary-600'} text-white`}>
-              G
-            </div>
-            <span className={`font-extrabold text-xl tracking-tight ${logoClass}`}>
+            <span className={`font-extrabold text-2xl tracking-tight ${logoClass}`}>
               Goleet<span className={isLanding && !scrolled ? 'text-white/70' : 'text-primary-400'}>.id</span>
             </span>
           </Link>
