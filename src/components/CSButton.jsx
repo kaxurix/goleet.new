@@ -4,7 +4,7 @@ import { MessageCircle, X, Phone } from "lucide-react";
 export default function CSButton() {
   const [tooltip, setTooltip] = useState(false);
 
-  const waNumber = "6281234567890";
+  const waNumber = "6281804208860";
   const waMessage = encodeURIComponent(
     "Halo Goleet.id! Saya ingin bertanya tentang layanan bisnis Anda.",
   );

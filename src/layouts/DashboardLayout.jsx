@@ -58,18 +58,31 @@ export default function DashboardLayout({ variant = "merchant", children }) {
       {/* Logo */}
       <button
         onClick={() => navigate("/")}
-        className={`flex items-center gap-3 px-5 h-16 border-b ${isAdmin ? "border-slate-800" : "border-surface-200"} flex-shrink-0`}
+        className={`flex items-center gap-2 px-5 h-16 border-b ${isAdmin ? "border-slate-800" : "border-surface-200"} flex-shrink-0`}
       >
         {!collapsed && (
-          <span className={`font-extrabold text-lg tracking-tight ${logoText}`}>
-            Goleet
-            <span className={isAdmin ? "text-slate-500" : "text-primary-400"}>
-              .id
+          <>
+            <img
+              src="/goleetnew.png"
+              alt="logo"
+              className="h-8 aspect-square"
+            />
+            <span
+              className={`font-extrabold text-lg tracking-tight ${logoText}`}
+            >
+              Goleet
+              <span className={isAdmin ? "text-slate-500" : "text-primary-400"}>
+                .id
+              </span>
             </span>
-          </span>
+          </>
         )}
         {collapsed && (
-          <span className={`font-extrabold text-base ${logoText}`}>G</span>
+          <img
+            src="/goleetnew.png"
+            alt="logo"
+            className="w-full aspect-square max-w-8"
+          />
         )}
       </button>
 
