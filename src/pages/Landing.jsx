@@ -10,11 +10,33 @@ import {
   Shield,
   Zap,
   TrendingUp,
-  MapPin,
-  Star,
 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import MerchantCard from "../components/MerchantCard";
 import { merchants, categories, banners } from "../data/data";
+
+const categoryIcons = {
+  kuliner: "mdi:silverware-fork-knife",
+  otomotif: "mdi:car-wrench",
+  teknologi: "mdi:laptop",
+  fashion: "mdi:tshirt-crew",
+  kesehatan: "mdi:hospital-box",
+  pendidikan: "mdi:book-education",
+  jasa: "mdi:toolbox-outline",
+  hiburan: "mdi:music-circle",
+};
+
+const categoryIconColorClass = {
+  kuliner: "text-orange-50",
+  otomotif: "text-cyan-50",
+  teknologi: "text-indigo-50",
+  fashion: "text-rose-50",
+  kesehatan: "text-emerald-50",
+  // Gradient kuning cenderung lebih terang, icon gelap lebih kebaca.
+  pendidikan: "text-slate-900/90",
+  jasa: "text-slate-50",
+  hiburan: "text-fuchsia-50",
+};
 
 function HeroSection() {
   const navigate = useNavigate();
@@ -273,7 +295,10 @@ function CategoryGrid() {
               <div
                 className={`relative w-16 h-16 rounded-2xl bg-gradient-to-br ${cat.gradient} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}
               >
-                <span className="text-3xl leading-none">{cat.icon}</span>
+                <Icon
+                  icon={categoryIcons[cat.id] || "mdi:shape-outline"}
+                  className={`w-8 h-8 drop-shadow-sm ${categoryIconColorClass[cat.id] || "text-white"}`}
+                />
               </div>
 
               {/* Label */}
