@@ -1,16 +1,17 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import { BannerProvider } from './context/BannerContext';
-import PublicLayout from './layouts/PublicLayout';
-import Landing from './pages/Landing';
-import Search from './pages/Search';
-import MerchantDetail from './pages/MerchantDetail';
-import Claim from './pages/Claim';
-import BannerAds from './pages/BannerAds';
-import Auth from './pages/Auth';
-import Pricing from './pages/Pricing';
-import MerchantDashboard from './pages/dashboard/MerchantDashboard';
-import AdminDashboard from './pages/dashboard/AdminDashboard';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { BannerProvider } from "./context/BannerContext";
+import PublicLayout from "./layouts/PublicLayout";
+import Landing from "./pages/Landing";
+import Search from "./pages/Search";
+import MerchantDetail from "./pages/MerchantDetail";
+import Claim from "./pages/Claim";
+import BannerAds from "./pages/BannerAds";
+import Auth from "./pages/Auth";
+import Pricing from "./pages/Pricing";
+import MerchantDashboard from "./pages/dashboard/MerchantDashboard";
+import UserDashboard from "./pages/dashboard/DashboardUser";
+import AdminDashboard from "./pages/dashboard/AdminDashboard";
 
 function ProtectedMerchant() {
   const { isLoggedIn, loginAsMerchant } = useAuth();
@@ -48,6 +49,7 @@ function AppRoutes() {
       {/* Dashboard Routes */}
       <Route path="/dashboard/merchant" element={<ProtectedMerchant />} />
       <Route path="/dashboard/admin" element={<ProtectedAdmin />} />
+      <Route path="/dashboard/user" element={<UserDashboard />} />
       <Route path="/admin" element={<ProtectedAdmin />} />
 
       {/* Fallback */}
