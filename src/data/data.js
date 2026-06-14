@@ -313,3 +313,36 @@ export const banners = [
     image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&q=80',
   },
 ];
+
+export const bannerSubmissionQueue = [
+  {
+    id: 'br1',
+    title: 'Festival Kopi Purbalingga',
+    subtitle: 'Promo tenant lokal dan live acoustic di Alun-Alun Purbalingga',
+    cta: 'Lihat Agenda',
+    bg: 'from-amber-600 via-orange-500 to-rose-500',
+    image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1200&q=80',
+    advertiserName: 'Kopi Ndeso Collective',
+    advertiserEmail: 'halo@kopindeso.id',
+    advertiserPhone: '628123456780',
+    paymentMethod: 'Transfer Bank BCA',
+    paymentStatus: 'verified',
+    description: 'Campaign untuk mendorong awareness event kopi lokal selama satu minggu penuh dengan CTA ke halaman agenda.',
+    submittedAt: '21 Mei 2026',
+  },
+  {
+    id: 'br2',
+    title: 'Diskon Grand Opening FitZone',
+    subtitle: 'Potongan 30% membership bulan pertama untuk 100 pendaftar awal',
+    cta: 'Klaim Promo',
+    bg: 'from-emerald-600 via-teal-500 to-cyan-500',
+    image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1200&q=80',
+    advertiserName: 'FitZone Purbalingga',
+    advertiserEmail: 'promo@fitzone.id',
+    advertiserPhone: '6282233445566',
+    paymentMethod: 'VA Mandiri',
+    paymentStatus: 'pending',
+    description: 'Banner dipakai untuk grand opening gym baru dengan target awareness dan konversi signup cepat.',
+    submittedAt: '20 Mei 2026',
+  },
+];

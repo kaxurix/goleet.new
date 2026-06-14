@@ -1,10 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { BannerProvider } from './context/BannerContext';
 import PublicLayout from './layouts/PublicLayout';
 import Landing from './pages/Landing';
 import Search from './pages/Search';
 import MerchantDetail from './pages/MerchantDetail';
 import Claim from './pages/Claim';
+import BannerAds from './pages/BannerAds';
 import Auth from './pages/Auth';
 import Pricing from './pages/Pricing';
 import MerchantDashboard from './pages/dashboard/MerchantDashboard';
@@ -36,6 +38,7 @@ function AppRoutes() {
         <Route path="/search" element={<Search />} />
         <Route path="/merchant/:id" element={<MerchantDetail />} />
         <Route path="/claim" element={<Claim />} />
+        <Route path="/banner-ads" element={<BannerAds />} />
         <Route path="/pricing" element={<Pricing />} />
       </Route>
 
@@ -57,7 +60,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppRoutes />
+        <BannerProvider>
+          <AppRoutes />
+        </BannerProvider>
       </AuthProvider>
     </BrowserRouter>
   );

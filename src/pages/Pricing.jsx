@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 const plans = [
   {
+    slug: 'free',
     title: 'Lapak Gratis',
     price: 'Rp 0',
     description: 'Mulai tampil online dengan profil bisnis sederhana yang tetap terlihat rapi dan meyakinkan.',
@@ -18,6 +19,7 @@ const plans = [
     ],
   },
   {
+    slug: 'premium',
     title: 'SaaS Premium',
     price: 'Rp 99k',
     description: 'Paket inti untuk bisnis yang ingin tampil lebih serius, lebih dipercaya, dan lebih mudah dipilih.',
@@ -34,6 +36,7 @@ const plans = [
     ],
   },
   {
+    slug: 'promo',
     title: 'Promote My Business',
     price: 'Rp 49k',
     description: 'Dorong campaign singkat untuk promo musiman, grand opening, atau produk baru yang butuh perhatian cepat.',
@@ -49,6 +52,7 @@ const plans = [
     ],
   },
   {
+    slug: 'banner',
     title: 'Banner dan Iklan',
     price: 'Rp 500k',
     description: 'Untuk brand yang ingin visibilitas besar lewat area banner utama dan placement yang lebih agresif.',
@@ -146,7 +150,7 @@ function PlanCard({ plan }) {
 
         <div className="mt-8">
           <Link
-            to="/claim"
+            to={plan.slug === 'banner' ? '/banner-ads' : '/claim'}
             className={`inline-flex w-full items-center justify-center rounded-2xl px-5 py-3 font-semibold transition-all duration-200 active:scale-95 ${
               plan.featured
                 ? 'bg-white text-primary-700 hover:bg-blue-50'
@@ -228,11 +232,11 @@ export default function Pricing() {
               <p className="text-sm uppercase tracking-[0.2em] text-primary-300">Next Step</p>
               <h2 className="mt-3 text-3xl font-black leading-tight">Butuh paket custom untuk campaign lokal?</h2>
               <p className="mt-4 text-slate-300 leading-relaxed">
-                Kita bisa arahkan pengguna ke alur klaim bisnis dulu, lalu tindak lanjuti penawaran sesuai kebutuhan promosi.
+                Untuk placement banner utama, pengguna sekarang bisa langsung masuk ke alur upload materi dan pembayaran yang lebih spesifik.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                <Link to="/claim" className="btn-primary justify-center">
-                  Klaim Bisnis
+                <Link to="/banner-ads" className="btn-primary justify-center">
+                  Pasang Banner
                 </Link>
                 <Link to="/search" className="btn-secondary justify-center">
                   Lihat Direktori

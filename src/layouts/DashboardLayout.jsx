@@ -5,6 +5,7 @@ import {
   Star,
   BarChart2,
   Settings,
+  Megaphone,
   LogOut,
   Menu,
   X,
@@ -24,6 +25,7 @@ const adminNavItems = [
   { label: "Overview", sectionId: "admin-overview", icon: LayoutDashboard },
   { label: "Analitik", sectionId: "admin-analytics", icon: BarChart2 },
   { label: "Verifikasi", sectionId: "admin-verify", icon: Star },
+  { label: "Verifikasi Banner", sectionId: "admin-banner-verify", icon: Megaphone },
   { label: "Pengaturan", sectionId: "admin-settings", icon: Settings },
 ];
 

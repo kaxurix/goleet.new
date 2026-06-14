@@ -13,7 +13,8 @@ import {
 } from "lucide-react";
 import { Icon } from "@iconify/react";
 import MerchantCard from "../components/MerchantCard";
-import { merchants, categories, banners } from "../data/data";
+import { merchants, categories } from "../data/data";
+import { useBanner } from "../hooks/useBanner";
 
 const categoryIcons = {
   kuliner: "mdi:silverware-fork-knife",
@@ -179,34 +180,40 @@ function HeroSection() {
 }
 
 function BannerCarousel() {
+  const { liveBanners } = useBanner();
   const [current, setCurrent] = useState(0);
   const intervalRef = useRef(null);
-
-  const startAuto = () => {
-    intervalRef.current = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % banners.length);
-    }, 4000);
-  };
+  const bannerItems = liveBanners;
+  const currentIndex = bannerItems.length === 0 ? 0 : current % bannerItems.length;
 
   useEffect(() => {
-    startAuto();
+    clearInterval(intervalRef.current);
+    if (bannerItems.length <= 1) return undefined;
+
+    intervalRef.current = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % bannerItems.length);
+    }, 4000);
+
     return () => clearInterval(intervalRef.current);
-  }, []);
+  }, [bannerItems.length]);
 
   const goTo = (idx) => {
     setCurrent(idx);
     clearInterval(intervalRef.current);
-    startAuto();
+    if (bannerItems.length <= 1) return;
+    intervalRef.current = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % bannerItems.length);
+    }, 4000);
   };
 
   return (
     <section className="py-12 bg-white">
       <div className="px-4 mx-auto max-w-7xl sm:px-6">
         <div className="relative h-64 overflow-hidden shadow-2xl rounded-3xl sm:h-80">
-          {banners.map((banner, idx) => (
+          {bannerItems.map((banner, idx) => (
             <div
               key={banner.id}
-              className={`absolute inset-0 transition-opacity duration-700 ${idx === current ? "opacity-100 z-10" : "opacity-0 z-0"}`}
+              className={`absolute inset-0 transition-opacity duration-700 ${idx === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"}`}
             >
               <img
                 src={banner.image}
@@ -234,26 +241,24 @@ function BannerCarousel() {
 
           {/* Dot indicators */}
           <div className="absolute z-20 flex gap-2 -translate-x-1/2 bottom-5 left-1/2">
-            {banners.map((_, idx) => (
+            {bannerItems.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => goTo(idx)}
-                className={`h-2 rounded-full transition-all duration-300 ${idx === current ? "bg-white w-8" : "bg-white/40 w-2"}`}
+                className={`h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? "bg-white w-8" : "bg-white/40 w-2"}`}
               />
             ))}
           </div>
 
           {/* Arrows */}
           <button
-            onClick={() =>
-              goTo((current - 1 + banners.length) % banners.length)
-            }
+            onClick={() => goTo((currentIndex - 1 + bannerItems.length) % bannerItems.length)}
             className="absolute z-20 flex items-center justify-center w-10 h-10 text-white transition-all -translate-y-1/2 rounded-full left-4 top-1/2 bg-black/30 hover:bg-black/50"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
-            onClick={() => goTo((current + 1) % banners.length)}
+            onClick={() => goTo((currentIndex + 1) % bannerItems.length)}
             className="absolute z-20 flex items-center justify-center w-10 h-10 text-white transition-all -translate-y-1/2 rounded-full right-4 top-1/2 bg-black/30 hover:bg-black/50"
           >
             <ChevronRight className="w-5 h-5" />
