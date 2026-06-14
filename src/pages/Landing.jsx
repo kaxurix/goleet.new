@@ -110,13 +110,18 @@ function HeroSection() {
               onClick={() => setCatOpen(!catOpen)}
               className="flex items-center w-full gap-2 px-5 py-4 text-sm font-medium text-white transition-all border sm:w-auto bg-white/10 backdrop-blur-sm border-white/30 rounded-2xl hover:bg-white/20"
             >
+<<<<<<< HEAD
               {selectedCategory
                 ? categories.find((c) => c.id === selectedCategory)?.label
                 : "Semua Kategori"}
               <ChevronDown className="w-4 h-4" />
+=======
+              {selectedCategory ? categories.find(c => c.id === selectedCategory)?.label : 'Semua Kategori'}
+              <ChevronDown className="w-4 h-4 z-50" />
+>>>>>>> userdashboard
             </button>
             {catOpen && (
-              <div className="absolute top-full mt-2 right-0 bg-white rounded-2xl shadow-2xl border border-surface-100 z-50 min-w-[180px] overflow-hidden">
+              <div className="absolute top-full mt-2 z-50 right-0 bg-white rounded-2xl shadow-2xl border border-surface-100 z-50 min-w-[180px]  ">
                 <button
                   onClick={() => {
                     setSelectedCategory("");

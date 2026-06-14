@@ -50,9 +50,20 @@ export default function CSButton() {
           style={{ animationDelay: "0.5s" }}
         />
 
+<<<<<<< HEAD
         <button
           onClick={() => setTooltip(true)}
           className="relative flex items-center justify-center transition-all duration-300 bg-green-500 rounded-full shadow-lg w-14 h-14 hover:bg-green-600 hover:shadow-xl hover:scale-110 active:scale-95"
+=======
+        <a
+          href={`https://wa.me/${waNumber}?text=${waMessage}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          onMousec={() => setTooltip(true)}
+          onMouseLeave={() => setTooltip(false)}
+          onClick={() => setTooltip(false)}
+          className="relative w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 shadow-lg hover:shadow-xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95"
+>>>>>>> userdashboard
           aria-label="Chat via WhatsApp"
         >
           <MessageCircle className="text-white w-7 h-7 fill-white" />
