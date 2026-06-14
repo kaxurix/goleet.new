@@ -11,6 +11,208 @@ import { useAuth } from '../../context/AuthContext';
 import { reviews, merchants } from '../../data/data';
 import StarRating from '../../components/StarRating';
 
+
+import {     useEffect } from 'react';
+import { X, Save, Image as ImageIcon, MapPin, Phone, Clock, DollarSign, Store } from 'lucide-react';
+
+ function EditProfileModal({ isOpen, onClose, merchant, onSave }) {
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    address: '',
+    phone: '',
+    openHours: '',
+    priceStart: '',
+  });
+
+  // Sinkronisasi data saat modal dibuka
+  useEffect(() => {
+    if (merchant && isOpen) {
+      setFormData({
+        name: merchant.name || '',
+        description: merchant.description || '',
+        address: merchant.address || '',
+        phone: merchant.phone || '',
+        openHours: merchant.openHours || '',
+        priceStart: merchant.priceStart || '',
+      });
+    }
+  }, [merchant, isOpen]);
+
+  if (!isOpen) return null;
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave(formData);
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+      <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl animate-fade-in">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-surface-100">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900">Edit Profil Bisnis</h2>
+            <p className="text-sm text-slate-500 mt-1">Perbarui informasi toko Anda agar pelanggan tetap update.</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-surface-100 rounded-xl transition-colors"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Body / Form */}
+        <div className="p-6 overflow-y-auto flex-1">
+          <form id="edit-profile-form" onSubmit={handleSubmit} className="space-y-6">
+            
+            {/* Cover Image Upload (Mock UI) */}
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Foto Sampul</label>
+              <div className="h-32 border-2 border-dashed border-surface-200 rounded-2xl flex flex-col items-center justify-center text-slate-500 hover:bg-surface-50 hover:border-primary-300 transition-colors cursor-pointer">
+                <ImageIcon size={28} className="mb-2 text-slate-400" />
+                <span className="text-sm font-medium">Klik untuk mengubah foto sampul</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Nama Bisnis */}
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Nama Bisnis</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Store size={16} className="text-slate-400" />
+                  </div>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-4 py-2.5 bg-surface-50 border border-surface-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all outline-none"
+                    placeholder="Nama bisnis Anda"
+                  />
+                </div>
+              </div>
+
+              {/* Jam Operasional */}
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Jam Operasional</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Clock size={16} className="text-slate-400" />
+                  </div>
+                  <input
+                    type="text"
+                    name="openHours"
+                    value={formData.openHours}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-4 py-2.5 bg-surface-50 border border-surface-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 transition-all outline-none"
+                    placeholder="Contoh: 09:00 - 22:00"
+                  />
+                </div>
+              </div>
+
+              {/* Harga Mulai */}
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Harga Mulai Dari</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <DollarSign size={16} className="text-slate-400" />
+                  </div>
+                  <input
+                    type="number"
+                    name="priceStart"
+                    value={formData.priceStart}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-4 py-2.5 bg-surface-50 border border-surface-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 transition-all outline-none"
+                    placeholder="Contoh: 15000"
+                  />
+                </div>
+              </div>
+
+              {/* Nomor WhatsApp */}
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Nomor WhatsApp</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Phone size={16} className="text-slate-400" />
+                  </div>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-4 py-2.5 bg-surface-50 border border-surface-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 transition-all outline-none"
+                    placeholder="628..."
+                  />
+                </div>
+              </div>
+
+              {/* Alamat Lengkap */}
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Alamat Lengkap</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 pt-3 pointer-events-none">
+                    <MapPin size={16} className="text-slate-400" />
+                  </div>
+                  <textarea
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    rows="2"
+                    className="w-full pl-10 pr-4 py-2.5 bg-surface-50 border border-surface-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 transition-all outline-none resize-none"
+                    placeholder="Alamat bisnis Anda..."
+                  ></textarea>
+                </div>
+              </div>
+
+              {/* Deskripsi */}
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Deskripsi Bisnis</label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows="4"
+                  className="w-full p-4 bg-surface-50 border border-surface-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 transition-all outline-none resize-none"
+                  placeholder="Ceritakan tentang bisnis Anda..."
+                ></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        {/* Footer */}
+        <div className="p-6 border-t border-surface-100 flex items-center justify-end gap-3 bg-surface-50">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-white border border-surface-200 rounded-xl hover:bg-surface-100 transition-colors"
+          >
+            Batal
+          </button>
+          <button
+            type="submit"
+            form="edit-profile-form"
+            className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-primary-600 rounded-xl hover:bg-primary-700 shadow-md hover:shadow-lg transition-all active:scale-95"
+          >
+            <Save size={16} />
+            Simpan Perubahan
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 const sentimentData = [
   { name: 'Positif', value: 80, color: '#22c55e' },
   { name: 'Netral', value: 15, color: '#94a3b8' },
@@ -169,20 +371,43 @@ function RecentReviewsCard({ merchantReviews }) {
   );
 }
 
-function QuickActions() {
+// Terima prop onEditProfile dari parent component
+function QuickActions({ onEditProfile }) {
   const actions = [
-    { label: 'Edit Profil', icon: Edit3, color: 'text-primary-600 bg-primary-50 hover:bg-primary-100' },
-    { label: 'Bagikan Link', icon: Share2, color: 'text-indigo-600 bg-indigo-50 hover:bg-indigo-100' },
-    { label: 'Lihat di Goleet', icon: ExternalLink, color: 'text-green-600 bg-green-50 hover:bg-green-100' },
-    { label: 'Upgrade Plan', icon: Crown, color: 'text-amber-600 bg-amber-50 hover:bg-amber-100' },
+    { 
+      label: 'Edit Profil', 
+      icon: Edit3, 
+      color: 'text-primary-600 bg-primary-50 hover:bg-primary-100',
+      onClick: onEditProfile // Masukkan fungsi langsung ke sini
+    },
+    { 
+      label: 'Bagikan Link', 
+      icon: Share2, 
+      color: 'text-indigo-600 bg-indigo-50 hover:bg-indigo-100',
+      onClick: () => console.log('Bagikan Link diklik') // Contoh aksi lain
+    },
+    { 
+      label: 'Lihat di Goleet', 
+      icon: ExternalLink, 
+      color: 'text-green-600 bg-green-50 hover:bg-green-100',
+      onClick: () => console.log('Lihat Goleet diklik') 
+    },
+    { 
+      label: 'Upgrade Plan', 
+      icon: Crown, 
+      color: 'text-amber-600 bg-amber-50 hover:bg-amber-100',
+      onClick: () => console.log('Upgrade Plan diklik') 
+    },
   ];
+
   return (
     <div className="card p-6">
       <h3 className="font-bold text-slate-900 mb-4">Aksi Cepat</h3>
       <div className="grid grid-cols-2 gap-3">
-        {actions.map(({ label, icon: Icon, color }) => (
+        {actions.map(({ label, icon: Icon, color, onClick }) => (
           <button
             key={label}
+            onClick={onClick} // Gunakan onClick di sini
             className={`flex flex-col items-center gap-2 p-4 rounded-2xl text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 ${color}`}
           >
             <Icon size={20} />
@@ -198,7 +423,14 @@ export default function MerchantDashboard() {
   const { user } = useAuth();
   const merchant = merchants[0];
   const merchantReviews = reviews.filter((r) => r.merchantId === '1');
+// 2. Tambahkan state untuk mengontrol modal
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  // 3. Fungsi untuk menangani penyimpanan data (bisa disambungkan ke API nanti)
+  const handleSaveProfile = (updatedData) => {
+    console.log('Data disimpan:', updatedData);
+    // Contoh implementasi API: axios.put('/api/merchants/1', updatedData)
+  };
   return (
     <DashboardLayout variant="merchant">
       <div className="p-4 sm:p-6 lg:p-8">
@@ -237,7 +469,7 @@ export default function MerchantDashboard() {
           {/* Right col - chart + quick actions */}
           <div id="merchant-analytics" className="space-y-6">
             <SentimentChart />
-            <QuickActions />
+      <QuickActions onEditProfile={() => setIsEditModalOpen(true)} />
 
             {/* Merchant info card */}
             <div className="card p-5">
@@ -280,6 +512,12 @@ export default function MerchantDashboard() {
           <p className="text-sm text-slate-500">Kelola informasi bisnis dan preferensi akun Anda — segera hadir.</p>
         </div>
       </div>
+     <EditProfileModal 
+        isOpen={isEditModalOpen} 
+        onClose={() => setIsEditModalOpen(false)} 
+        merchant={merchant}
+        onSave={handleSaveProfile}
+      />
     </DashboardLayout>
   );
 }
