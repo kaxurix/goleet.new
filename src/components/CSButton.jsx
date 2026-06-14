@@ -43,7 +43,7 @@ export default function CSButton() {
           href={`https://wa.me/${waNumber}?text=${waMessage}`}
           target="_blank"
           rel="noopener noreferrer"
-          onMouseEnter={() => setTooltip(true)}
+          onMousec={() => setTooltip(true)}
           onMouseLeave={() => setTooltip(false)}
           onClick={() => setTooltip(false)}
           className="relative w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 shadow-lg hover:shadow-xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95"

@@ -9,6 +9,7 @@ import Auth from './pages/Auth';
 import Pricing from './pages/Pricing';
 import MerchantDashboard from './pages/dashboard/MerchantDashboard';
 import AdminDashboard from './pages/dashboard/AdminDashboard';
+import UserDashboard from './pages/dashboard/dashboarduser';
 
 function ProtectedMerchant() {
   const { isLoggedIn, loginAsMerchant } = useAuth();
@@ -44,6 +45,7 @@ function AppRoutes() {
 
       {/* Dashboard Routes */}
       <Route path="/dashboard/merchant" element={<ProtectedMerchant />} />
+      <Route path="/dashboard/user" element={<UserDashboard />} />
       <Route path="/dashboard/admin" element={<ProtectedAdmin />} />
       <Route path="/admin" element={<ProtectedAdmin />} />
 

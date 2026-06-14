@@ -11,7 +11,7 @@ export default function PublicLayout() {
         <Outlet />
       </main>
       <Footer />
-      <CSButton />
+      <CSButton/>
     </div>
   );
 }

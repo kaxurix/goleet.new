@@ -73,10 +73,10 @@ function HeroSection() {
               className="flex items-center gap-2 w-full sm:w-auto px-5 py-4 bg-white/10 backdrop-blur-sm border border-white/30 text-white rounded-2xl text-sm font-medium hover:bg-white/20 transition-all"
             >
               {selectedCategory ? categories.find(c => c.id === selectedCategory)?.label : 'Semua Kategori'}
-              <ChevronDown className="w-4 h-4" />
+              <ChevronDown className="w-4 h-4 z-50" />
             </button>
             {catOpen && (
-              <div className="absolute top-full mt-2 right-0 bg-white rounded-2xl shadow-2xl border border-surface-100 z-50 min-w-[180px] overflow-hidden">
+              <div className="absolute top-full mt-2 z-50 right-0 bg-white rounded-2xl shadow-2xl border border-surface-100 z-50 min-w-[180px]  ">
                 <button
                   onClick={() => { setSelectedCategory(''); setCatOpen(false); }}
                   className="block w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-primary-50 hover:text-primary-700 transition-colors"
