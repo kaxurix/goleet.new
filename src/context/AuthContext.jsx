@@ -6,15 +6,18 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [hasClaimedBusiness, setHasClaimedBusiness] = useState(false);
 
   const loginAsMerchant = () => {
     setUser(merchantUser);
     setIsLoggedIn(true);
+    setHasClaimedBusiness(false);
   };
 
   const loginAsAdmin = () => {
     setUser(adminUser);
     setIsLoggedIn(true);
+    setHasClaimedBusiness(false);
   };
 
   const login = (email, password, role) => {
@@ -29,10 +32,22 @@ export function AuthProvider({ children }) {
   const logout = () => {
     setUser(null);
     setIsLoggedIn(false);
+    setHasClaimedBusiness(false);
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn, login, logout, loginAsMerchant, loginAsAdmin }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isLoggedIn,
+        hasClaimedBusiness,
+        login,
+        logout,
+        loginAsMerchant,
+        loginAsAdmin,
+        setHasClaimedBusiness,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

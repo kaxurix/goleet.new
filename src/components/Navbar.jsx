@@ -14,7 +14,7 @@ import { useAuth } from "../context/AuthContext";
 import { categories } from "../data/data";
 
 export default function Navbar() {
-  const { isLoggedIn, user, logout } = useAuth();
+  const { isLoggedIn, user, logout, hasClaimedBusiness } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -42,7 +42,9 @@ export default function Navbar() {
     { label: "Beranda", to: "/" },
     { label: "Cari Bisnis", to: "/search" },
     { label: "Pricing", to: "/pricing" },
-    { label: "Daftarkan Bisnis", to: "/claim" },
+    ...(user?.role === "merchant" && !hasClaimedBusiness
+      ? [{ label: "Daftarkan Bisnis", to: "/claim" }]
+      : []),
   ];
 
   const bgClass = isLanding
