@@ -582,6 +582,7 @@ export default function MerchantDashboard() {
   return (
     <DashboardLayout variant="merchant">
       <div className="p-4 sm:p-6 lg:p-8">
+        
         {/* Welcome Header */}
         <div className="flex items-start justify-between gap-4 mb-8">
           <div>
