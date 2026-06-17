@@ -1,11 +1,24 @@
-import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { MapPin, Phone, Clock, Tag, MessageCircle, Star, Sparkles, ChevronLeft, Share2, Heart, Image } from 'lucide-react';
-import StarRating from '../components/StarRating';
-import { VerifiedBadge, PremiumBadge } from '../components/Badge';
-import { merchants, reviews } from '../data/data';
+import { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import {
+  MapPin,
+  Phone,
+  Clock,
+  Tag,
+  MessageCircle,
+  Star,
+  Sparkles,
+  ChevronLeft,
+  Share2,
+  Heart,
+  Image,
+} from "lucide-react";
+import StarRating from "../components/StarRating";
+import { VerifiedBadge, PremiumBadge } from "../components/Badge";
+import { merchants, reviews } from "../data/data";
 
 function AIReviewWidget({ summary }) {
+  const [allReviews, setAllReviews] = useState(reviews);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 600);
@@ -24,10 +37,17 @@ function AIReviewWidget({ summary }) {
             <Sparkles className="w-5 h-5 text-amber-300 ai-sparkle" />
           </div>
           <div>
-            <h3 className="font-bold text-white text-lg">AI Review Summarizer</h3>
-            <p className="text-white/60 text-xs">Dianalisis dari {Math.floor(Math.random() * 50 + 80)} ulasan pelanggan</p>
+            <h3 className="font-bold text-white text-lg">
+              AI Review Summarizer
+            </h3>
+            <p className="text-white/60 text-xs">
+              Dianalisis dari {Math.floor(Math.random() * 50 + 80)} ulasan
+              pelanggan
+            </p>
           </div>
-          <span className="ml-auto bg-white/20 text-white text-xs font-semibold px-3 py-1 rounded-full">Beta</span>
+          <span className="ml-auto bg-white/20 text-white text-xs font-semibold px-3 py-1 rounded-full">
+            Beta
+          </span>
         </div>
 
         {!visible ? (
@@ -44,11 +64,26 @@ function AIReviewWidget({ summary }) {
 
         <div className="mt-6 flex flex-wrap gap-3">
           {[
-            { label: '😊 Positif', pct: '82%', color: 'bg-green-500/30 text-green-200' },
-            { label: '😐 Netral', pct: '13%', color: 'bg-white/20 text-white/70' },
-            { label: '😞 Negatif', pct: '5%', color: 'bg-red-400/30 text-red-200' },
+            {
+              label: "😊 Positif",
+              pct: "82%",
+              color: "bg-green-500/30 text-green-200",
+            },
+            {
+              label: "😐 Netral",
+              pct: "13%",
+              color: "bg-white/20 text-white/70",
+            },
+            {
+              label: "😞 Negatif",
+              pct: "5%",
+              color: "bg-red-400/30 text-red-200",
+            },
           ].map(({ label, pct, color }) => (
-            <span key={label} className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl ${color}`}>
+            <span
+              key={label}
+              className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl ${color}`}
+            >
               {label} — {pct}
             </span>
           ))}
@@ -69,15 +104,21 @@ function ReviewCard({ review }) {
         />
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
-            <span className="font-semibold text-slate-800 text-sm">{review.author}</span>
-            <span className="text-xs text-slate-400 flex-shrink-0">{review.date}</span>
+            <span className="font-semibold text-slate-800 text-sm">
+              {review.author}
+            </span>
+            <span className="text-xs text-slate-400 flex-shrink-0">
+              {review.date}
+            </span>
           </div>
           <StarRating rating={review.rating} size="sm" />
         </div>
       </div>
       <p className="text-sm text-slate-600 leading-relaxed">{review.text}</p>
       <div className="mt-3 flex items-center gap-2">
-        <button className="text-xs text-slate-400 hover:text-primary-600 transition-colors">👍 Helpful ({review.helpful})</button>
+        <button className="text-xs text-slate-400 hover:text-primary-600 transition-colors">
+          👍 Helpful ({review.helpful})
+        </button>
       </div>
     </div>
   );
@@ -85,19 +126,42 @@ function ReviewCard({ review }) {
 
 export default function MerchantDetail() {
   const { id } = useParams();
-  const [activeTab, setActiveTab] = useState('info');
+  const [activeTab, setActiveTab] = useState("info");
   const [liked, setLiked] = useState(false);
+
+  // Review Form State
+  const [newReviewText, setNewReviewText] = useState("");
+  const [newReviewRating, setNewReviewRating] = useState(0);
+  const [allReviews, setAllReviews] = useState(reviews);
 
   const merchant = merchants.find((m) => m.id === id) || merchants[0];
   const merchantReviews = reviews.filter((r) => r.merchantId === merchant.id);
 
   const tabs = [
-    { id: 'info', label: 'Informasi' },
-    { id: 'reviews', label: `Ulasan (${merchantReviews.length})` },
-    { id: 'photos', label: 'Foto' },
+    { id: "info", label: "Informasi" },
+    { id: "reviews", label: `Ulasan (${merchantReviews.length})` },
+    { id: "photos", label: "Foto" },
   ];
 
-  const waMessage = encodeURIComponent(`Halo ${merchant.name}! Saya menemukan bisnis Anda di Goleet.id dan ingin bertanya lebih lanjut.`);
+  const waMessage = encodeURIComponent(
+    `Halo ${merchant.name}! Saya menemukan bisnis Anda di Goleet.id dan ingin bertanya lebih lanjut.`,
+  );
+
+  const handleReviewSubmit = (e) => {
+    e.preventDefault();
+    if (newReviewRating === 0) {
+      alert("Silakan pilih rating terlebih dahulu!");
+      return;
+    }
+    if (!newReviewText.trim()) {
+      alert("Silakan tulis ulasan Anda!");
+      return;
+    }
+
+    setAllReviews((prev) => [...prev]);
+    setNewReviewText("");
+    setNewReviewRating(0);
+  };
 
   return (
     <div className="min-h-screen bg-surface-50 pt-16">
@@ -124,7 +188,9 @@ export default function MerchantDetail() {
             onClick={() => setLiked(!liked)}
             className="w-10 h-10 rounded-xl bg-black/40 backdrop-blur-sm flex items-center justify-center hover:bg-black/60 transition-all"
           >
-            <Heart className={`w-5 h-5 ${liked ? 'text-red-400 fill-red-400' : 'text-white'}`} />
+            <Heart
+              className={`w-5 h-5 ${liked ? "text-red-400 fill-red-400" : "text-white"}`}
+            />
           </button>
           <button className="w-10 h-10 rounded-xl bg-black/40 backdrop-blur-sm flex items-center justify-center hover:bg-black/60 transition-all">
             <Share2 className="w-5 h-5 text-white" />
@@ -139,7 +205,9 @@ export default function MerchantDetail() {
               {merchant.premium && <PremiumBadge />}
               <span className="badge-neutral">{merchant.categoryLabel}</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-white">{merchant.name}</h1>
+            <h1 className="text-2xl sm:text-3xl font-black text-white">
+              {merchant.name}
+            </h1>
           </div>
         </div>
       </div>
@@ -150,7 +218,12 @@ export default function MerchantDetail() {
           <div className="flex flex-wrap gap-4 items-start justify-between">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <StarRating rating={merchant.rating} size="md" showCount count={merchant.reviewCount} />
+                <StarRating
+                  rating={merchant.rating}
+                  size="md"
+                  showCount
+                  count={merchant.reviewCount}
+                />
               </div>
               <div className="flex items-center gap-2 text-sm text-slate-500">
                 <MapPin className="w-4 h-4 text-primary-500" />
@@ -164,7 +237,7 @@ export default function MerchantDetail() {
             <div className="text-right">
               <p className="text-xs text-slate-500">Mulai dari</p>
               <p className="text-xl font-black text-primary-700">
-                Rp {merchant.priceStart.toLocaleString('id-ID')}
+                Rp {merchant.priceStart.toLocaleString("id-ID")}
               </p>
             </div>
           </div>
@@ -188,8 +261,8 @@ export default function MerchantDetail() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 ${
                 activeTab === tab.id
-                  ? 'bg-white text-primary-700 shadow-sm'
-                  : 'text-slate-500 hover:text-slate-700'
+                  ? "bg-white text-primary-700 shadow-sm"
+                  : "text-slate-500 hover:text-slate-700"
               }`}
             >
               {tab.label}
@@ -198,11 +271,13 @@ export default function MerchantDetail() {
         </div>
 
         {/* Tab Content */}
-        {activeTab === 'info' && (
+        {activeTab === "info" && (
           <div className="animate-fade-in">
             <div className="card p-6 mb-6">
               <h2 className="font-bold text-slate-900 mb-3">Tentang Bisnis</h2>
-              <p className="text-slate-600 leading-relaxed text-sm">{merchant.description}</p>
+              <p className="text-slate-600 leading-relaxed text-sm">
+                {merchant.description}
+              </p>
             </div>
             <AIReviewWidget summary={merchant.aiSummary} />
 
@@ -220,25 +295,77 @@ export default function MerchantDetail() {
           </div>
         )}
 
-        {activeTab === 'reviews' && (
-          <div className="space-y-4 animate-fade-in">
-            {merchantReviews.length > 0 ? (
-              merchantReviews.map((review) => (
-                <ReviewCard key={review.id} review={review} />
-              ))
-            ) : (
-              <div className="text-center py-12">
-                <div className="text-5xl mb-3">💬</div>
-                <p className="text-slate-500">Belum ada ulasan. Jadilah yang pertama!</p>
-              </div>
-            )}
+        {activeTab === "reviews" && (
+          <div className="space-y-6 animate-fade-in">
+            {/* Review Form (Google Maps Style) */}
+            <div className="card p-5">
+              <h3 className="font-bold text-slate-800 mb-4">
+                Beri nilai dan ulasan
+              </h3>
+              <form onSubmit={handleReviewSubmit}>
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-sm font-medium text-slate-600">
+                    Rating Anda:
+                  </span>
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setNewReviewRating(star)}
+                        className={`transition-colors ${newReviewRating >= star ? "text-amber-400" : "text-slate-300 hover:text-amber-200"}`}
+                      >
+                        <Star
+                          className={`w-8 h-8 ${newReviewRating >= star ? "fill-current" : ""}`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <textarea
+                    rows={4}
+                    placeholder="Ceritakan pengalaman Anda dengan bisnis ini..."
+                    className="w-full border border-surface-200 rounded-xl p-4 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-surface-50 resize-none transition-all"
+                    value={newReviewText}
+                    onChange={(e) => setNewReviewText(e.target.value)}
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <button type="submit" className="btn-primary px-6 py-2">
+                    Kirim Ulasan
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="font-bold text-slate-800 border-b border-surface-200 pb-2">
+                Semua Ulasan
+              </h3>
+              {merchantReviews.length > 0 ? (
+                merchantReviews.map((review) => (
+                  <ReviewCard key={review.id} review={review} />
+                ))
+              ) : (
+                <div className="text-center py-12">
+                  <div className="text-5xl mb-3">💬</div>
+                  <p className="text-slate-500">
+                    Belum ada ulasan. Jadilah yang pertama!
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
-        {activeTab === 'photos' && (
+        {activeTab === "photos" && (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 animate-fade-in">
             {merchant.photos.map((photo, idx) => (
-              <div key={idx} className="aspect-square rounded-2xl overflow-hidden bg-surface-100">
+              <div
+                key={idx}
+                className="aspect-square rounded-2xl overflow-hidden bg-surface-100"
+              >
                 <img
                   src={photo}
                   alt={`${merchant.name} foto ${idx + 1}`}
