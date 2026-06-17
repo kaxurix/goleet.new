@@ -213,10 +213,6 @@ export default function Pricing() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
           <div className="max-w-3xl text-center mx-auto">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm font-medium px-4 py-2 rounded-full mb-6">
-              <Sparkles className="w-4 h-4 text-amber-300" />
-              Paket untuk tampil, promosi, dan tumbuh
-            </div>
             <h1 className="text-4xl sm:text-5xl font-black text-white leading-tight text-balance">
               Pricing yang simpel,
               <br />

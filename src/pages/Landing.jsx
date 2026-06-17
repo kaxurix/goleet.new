@@ -29,15 +29,15 @@ const categoryIcons = {
 };
 
 const categoryIconColorClass = {
-  kuliner: "text-orange-50",
-  otomotif: "text-cyan-50",
-  teknologi: "text-indigo-50",
-  fashion: "text-rose-50",
-  kesehatan: "text-emerald-50",
+  kuliner: "text-white",
+  otomotif: "text-white",
+  teknologi: "text-white",
+  fashion: "text-white",
+  kesehatan: "text-white",
   // Gradient kuning cenderung lebih terang, icon gelap lebih kebaca.
-  pendidikan: "text-slate-900/90",
-  jasa: "text-slate-50",
-  hiburan: "text-fuchsia-50",
+  pendidikan: "text-white",
+  jasa: "text-white",
+  hiburan: "text-white",
 };
 
 function HeroSection() {
@@ -68,10 +68,10 @@ function HeroSection() {
 
       <div className="relative z-10 max-w-4xl px-4 pt-24 pb-32 mx-auto text-center sm:px-6">
         {/* Eyebrow */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 text-sm font-medium text-white border rounded-full bg-white/10 backdrop-blur-sm border-white/20 animate-fade-in">
+        {/* <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 text-sm font-medium text-white border rounded-full bg-white/10 backdrop-blur-sm border-white/20 animate-fade-in">
           <Sparkles className="w-4 h-4 text-amber-300" />
           Direktori Bisnis Lokal #1 di Purbalingga
-        </div>
+        </div> */}
 
         {/* Headline */}
         <h1 className="mb-6 text-4xl font-black leading-tight text-white sm:text-5xl lg:text-6xl animate-slide-up text-balance">
@@ -297,12 +297,12 @@ function CategoryGrid() {
             >
               {/* Subtle gradient blob behind icon */}
               <div
-                className={`absolute inset-0 bg-gradient-to-br ${cat.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-3xl`}
+                className={`absolute inset-0 bg-primary-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-3xl`}
               />
 
               {/* Icon container */}
               <div
-                className={`relative w-16 h-16 rounded-2xl bg-gradient-to-br ${cat.gradient} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                className={`relative w-16 h-16 rounded-2xl bg-primary-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}
               >
                 <Icon
                   icon={categoryIcons[cat.id] || "mdi:shape-outline"}
@@ -322,7 +322,7 @@ function CategoryGrid() {
 
               {/* Active indicator */}
               <div
-                className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-1 w-0 group-hover:w-12 bg-gradient-to-r ${cat.gradient} rounded-full transition-all duration-300`}
+                className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-1 w-0 group-hover:w-12 bg-primary-600 rounded-full transition-all duration-300`}
               />
             </button>
           ))}
