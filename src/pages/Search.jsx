@@ -81,67 +81,20 @@ export default function Search() {
             <button type="submit" className="btn-primary px-6">
               Cari
             </button>
-            <button
-              type="button"
-              onClick={() => setShowFilters(!showFilters)}
-              className={`hidden items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all ${showFilters ? "bg-primary-600 text-white border-primary-600" : "bg-white text-slate-700 border-surface-200 hover:border-primary-300"}`}
-            >
-              <SlidersHorizontal className="w-4 h-4" />
-              <span className="hidden sm:inline">Filter</span>
-              {hasActiveFilters && (
-                <span className="w-2 h-2 rounded-full bg-amber-400" />
-              )}
-            </button>
           </form>
-
-          {/* Active filters */}
-          {hasActiveFilters && (
-            <div className="flex flex-wrap items-center gap-2 mt-3">
-              <span className="text-xs text-slate-500">Filter aktif:</span>
-              {query && (
-                <span className="flex items-center gap-1 bg-primary-50 text-primary-700 text-xs px-2.5 py-1 rounded-full">
-                  "{query}"
-                  <button onClick={() => setQuery("")}>
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              )}
-              {selectedCat && (
-                <span className="flex items-center gap-1 bg-primary-50 text-primary-700 text-xs px-2.5 py-1 rounded-full">
-                  {categories.find((c) => c.id === selectedCat)?.label}
-                  <button onClick={() => setSelectedCat("")}>
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              )}
-              {minRating > 0 && (
-                <span className="flex items-center gap-1 bg-amber-50 text-amber-700 text-xs px-2.5 py-1 rounded-full">
-                  ≥{minRating}★
-                  <button onClick={() => setMinRating(0)}>
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              )}
-              <button
-                onClick={clearFilter}
-                className="text-xs text-red-500 hover:text-red-700 ml-1"
-              >
-                Hapus semua
-              </button>
-            </div>
-          )}
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        <div className="flex gap-8">
+        <div className="flex gap-8 items-start">
           {/* Sidebar Filters */}
           <aside
             className={`${
               showFilters ? "block" : "hidden lg:block"
-            } w-64 flex-shrink-0`}
+            } w-64 flex-shrink-0 sticky top-32 self-start`}
+            style={{ height: "calc(100vh - 8rem)", overflowY: "auto" }}
           >
-            <div className="card p-5 sticky top-36">
+            <div className="card p-5">
               <div className="flex items-center justify-between mb-5">
                 <h3 className="font-bold text-slate-900">Filter</h3>
                 {hasActiveFilters && (
@@ -196,7 +149,7 @@ export default function Search() {
                   Rating Minimum
                 </h4>
                 <div className="space-y-1.5">
-                  {[0, 3, 4, 4.5].map((r) => (
+                  {[0, 4.5].map((r) => (
                     <button
                       key={r}
                       onClick={() => setMinRating(r)}
@@ -210,24 +163,6 @@ export default function Search() {
                     </button>
                   ))}
                 </div>
-              </div>
-
-              {/* Verified only */}
-              <div>
-                <h4 className="text-sm font-semibold text-slate-700 mb-3">
-                  Status
-                </h4>
-                <label className="flex items-center gap-2 cursor-pointer group">
-                  <input
-                    type="checkbox"
-                    checked={verifiedOnly}
-                    onChange={(e) => setVerifiedOnly(e.target.checked)}
-                    className="w-4 h-4 rounded border-surface-300 text-primary-600 focus:ring-primary-500"
-                  />
-                  <span className="text-sm text-slate-600 group-hover:text-slate-800">
-                    Verified Pro saja
-                  </span>
-                </label>
               </div>
             </div>
           </aside>
@@ -286,20 +221,34 @@ export default function Search() {
                         </h2>
                       </div>
                       <button
-                        onClick={() => setIsVerifiedExpanded(!isVerifiedExpanded)}
+                        onClick={() =>
+                          setIsVerifiedExpanded(!isVerifiedExpanded)
+                        }
                         className="text-sm font-medium text-primary-600 hover:text-primary-700 flex items-center gap-1"
                       >
-                        {isVerifiedExpanded ? "Tampilkan Lebih Sedikit" : "Lihat Semua"}
-                        <Icon icon={isVerifiedExpanded ? "mdi:chevron-up" : "mdi:chevron-down"} className="w-4 h-4" />
+                        {isVerifiedExpanded
+                          ? "Tampilkan Lebih Sedikit"
+                          : "Lihat Semua"}
+                        <Icon
+                          icon={
+                            isVerifiedExpanded
+                              ? "mdi:chevron-up"
+                              : "mdi:chevron-down"
+                          }
+                          className="w-4 h-4"
+                        />
                       </button>
                     </div>
-                    
+
                     {isVerifiedExpanded ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                         {filtered
                           .filter((m) => m.verified)
                           .map((merchant) => (
-                            <MerchantCard key={merchant.id} merchant={merchant} />
+                            <MerchantCard
+                              key={merchant.id}
+                              merchant={merchant}
+                            />
                           ))}
                       </div>
                     ) : (
