@@ -642,9 +642,7 @@ export default function UserDashboard() {
         >
           <ArrowLeft size={16} /> Kembali
         </button>
-        <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-slate-100 text-slate-500 select-none">
-          Version 2.0
-        </span>
+        
       </nav>
 
       <div className="p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto">
