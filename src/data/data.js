@@ -383,6 +383,14 @@ export const adminUser = {
   avatar: 'https://i.pravatar.cc/80?img=50',
 };
 
+export const regularUser = {
+  id: 'u1',
+  name: 'Budi Santoso',
+  email: 'budi@gmail.com',
+  role: 'user',
+  avatar: 'https://i.pravatar.cc/80?img=12',
+};
+
 export const banners = [
   {
     id: 'b1',

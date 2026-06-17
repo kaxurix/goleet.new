@@ -33,7 +33,7 @@ export default function Auth() {
     login(email, password, tab === "login" ? "merchant" : role);
     setLoading(false);
 
-    if (role === "user") {
+    if (role === "user" || tab == "login") {
       navigate("/");
     } else {
       navigate("/claim");

@@ -128,7 +128,9 @@ export default function Navbar() {
                   to={
                     user?.role === "admin"
                       ? "/dashboard/admin"
-                      : "/dashboard/merchant"
+                      : user?.role === "merchant"
+                        ? "/dashboard/merchant"
+                        : "/dashboard/user"
                   }
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                     isLanding && !scrolled
@@ -217,7 +219,9 @@ export default function Navbar() {
                   to={
                     user?.role === "admin"
                       ? "/dashboard/admin"
-                      : "/dashboard/merchant"
+                      : user?.role === "merchant"
+                        ? "/dashboard/merchant"
+                        : "/dashboard/user"
                   }
                   className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl text-primary-700 bg-primary-50"
                 >

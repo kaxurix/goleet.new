@@ -15,6 +15,7 @@ import { Icon } from "@iconify/react";
 import MerchantCard from "../components/MerchantCard";
 import { merchants, categories } from "../data/data";
 import { useBanner } from "../hooks/useBanner";
+import { useAuth } from "../context/AuthContext";
 
 const categoryIcons = {
   kuliner: "mdi:silverware-fork-knife",
@@ -184,7 +185,8 @@ function BannerCarousel() {
   const [current, setCurrent] = useState(0);
   const intervalRef = useRef(null);
   const bannerItems = liveBanners;
-  const currentIndex = bannerItems.length === 0 ? 0 : current % bannerItems.length;
+  const currentIndex =
+    bannerItems.length === 0 ? 0 : current % bannerItems.length;
 
   useEffect(() => {
     clearInterval(intervalRef.current);
@@ -252,7 +254,9 @@ function BannerCarousel() {
 
           {/* Arrows */}
           <button
-            onClick={() => goTo((currentIndex - 1 + bannerItems.length) % bannerItems.length)}
+            onClick={() =>
+              goTo((currentIndex - 1 + bannerItems.length) % bannerItems.length)
+            }
             className="absolute z-20 flex items-center justify-center w-10 h-10 text-white transition-all -translate-y-1/2 rounded-full left-4 top-1/2 bg-black/30 hover:bg-black/50"
           >
             <ChevronLeft className="w-5 h-5" />
@@ -467,16 +471,120 @@ function CTABanner() {
     </section>
   );
 }
-
 export default function Landing() {
+  const { user, loginAsAdmin, loginAsMerchant, loginAsUser, logout } =
+    useAuth();
+
+  // State untuk mengontrol apakah dialog terbuka atau tertutup
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Membuka/menutup dialog menggunakan Ctrl + K
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.ctrlKey && e.key === "k") {
+        e.preventDefault();
+        setIsDialogOpen((prev) => !prev);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Fungsi untuk menangani perubahan saat memilih dropdown
+  const handleRoleSelection = (e) => {
+    const selectedRole = e.target.value;
+
+    if (selectedRole === "admin") loginAsAdmin();
+    else if (selectedRole === "merchant") loginAsMerchant();
+    else if (selectedRole === "user") loginAsUser();
+    else logout(); // Untuk guest / tidak ada sesi
+
+    // Tutup dialog setelah memilih
+    setIsDialogOpen(false);
+  };
+
   return (
-    <div>
+    <div style={{ position: "relative", minHeight: "100vh" }}>
       <HeroSection />
       <BannerCarousel />
       <TopRecommendations />
       <CategoryGrid />
       <WhyGoleet />
       <CTABanner />
+
+      {/* --- Dialog Card --- */}
+      {isDialogOpen && (
+        <div style={styles.overlay}>
+          <div style={styles.card}>
+            <h3 style={{ marginTop: 0, marginBottom: "15px" }}>
+              Pilih Role Simulasi
+            </h3>
+
+            <select
+              value={user?.role || "guest"}
+              onChange={handleRoleSelection}
+              style={styles.selectInput}
+            >
+              <option value="guest">Guest</option>
+              <option value="user">User</option>
+              <option value="merchant">Merchant</option>
+              <option value="admin">Admin</option>
+            </select>
+
+            <button
+              onClick={() => setIsDialogOpen(false)}
+              style={styles.closeButton}
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
+// Objek style sederhana untuk Card Dialog (Bisa diganti menggunakan Tailwind/CSS Modules)
+const styles = {
+  overlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 9999, // Memastikan dialog selalu berada di paling atas
+  },
+  card: {
+    backgroundColor: "#fff",
+    padding: "24px",
+    borderRadius: "12px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+    width: "300px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+  },
+  selectInput: {
+    padding: "10px",
+    borderRadius: "6px",
+    border: "1px solid #ccc",
+    fontSize: "16px",
+    width: "100%",
+    marginBottom: "15px",
+    cursor: "pointer",
+  },
+  closeButton: {
+    padding: "10px",
+    backgroundColor: "#ef4444",
+    color: "#fff",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontWeight: "bold",
+  },
+};

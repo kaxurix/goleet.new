@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from 'react';
-import { merchantUser, adminUser } from '../data/data';
+import { merchantUser, adminUser, regularUser } from '../data/data';
 
 const AuthContext = createContext(null);
 
@@ -20,11 +20,19 @@ export function AuthProvider({ children }) {
     setHasClaimedBusiness(false);
   };
 
+  const loginAsUser = () => {
+    setUser(regularUser);
+    setIsLoggedIn(true);
+    setHasClaimedBusiness(false);
+  };
+
   const login = (email, password, role) => {
     if (role === 'admin') {
       loginAsAdmin();
-    } else {
+    } else if (role === 'merchant') {
       loginAsMerchant();
+    } else {
+      loginAsUser();
     }
     return true;
   };
@@ -45,6 +53,7 @@ export function AuthProvider({ children }) {
         logout,
         loginAsMerchant,
         loginAsAdmin,
+        loginAsUser,
         setHasClaimedBusiness,
       }}
     >
