@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Eye,
   MessageCircle,
@@ -14,6 +15,14 @@ import {
   BarChart2,
   Edit3,
   Share2,
+  X,
+  Save,
+  Image as ImageIcon,
+  MapPin,
+  Phone,
+  Clock,
+  DollarSign,
+  Store,
 } from "lucide-react";
 import {
   PieChart,
@@ -23,11 +32,11 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+
 import DashboardLayout from "../../layouts/DashboardLayout";
 import { useAuth } from "../../context/AuthContext";
 import { reviews, merchants } from "../../data/data";
 import StarRating from "../../components/StarRating";
-import { useNavigate } from "react-router-dom";
 
 const sentimentData = [
   { name: "Positif", value: 80, color: "#22c55e" },
@@ -35,14 +44,279 @@ const sentimentData = [
   { name: "Negatif", value: 5, color: "#ef4444" },
 ];
 
-function StatCard({
-  icon: Icon,
-  label,
-  value,
-  trend,
-  trendValue,
-  color = "primary",
-}) {
+/* ==========================================
+   COMPONENT: EditProfileModal
+   ========================================== */
+function EditProfileModal({ isOpen, onClose, merchant, onSave }) {
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    address: "",
+    phone: "",
+    openHours: "",
+    priceStart: "",
+    image: "", // Menampung URL gambar bisnis/sampul
+  });
+
+  // State tambahan untuk pratinjau gambar baru yang dipilih
+  const [imagePreview, setImagePreview] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  useEffect(() => {
+    if (merchant && isOpen) {
+      setFormData({
+        name: merchant.name || "",
+        description: merchant.description || "",
+        address: merchant.address || "",
+        phone: merchant.phone || "",
+        openHours: merchant.openHours || "",
+        priceStart: merchant.priceStart || "",
+        image: merchant.image || "",
+      });
+      setImagePreview(merchant.image || "");
+      setSelectedFile(null);
+    }
+  }, [merchant, isOpen]);
+
+  if (!isOpen) return null;
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      // Membuat URL lokal sementara untuk pratinjau gambar (preview)
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Gabungkan data form dengan gambar baru (jika ada perubahan) atau gambar lama
+    onSave({
+      ...formData,
+      image: imagePreview, 
+    });
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+      <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl animate-fade-in">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-surface-100">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900">Edit Profil Bisnis</h2>
+            <p className="text-sm text-slate-500 mt-1">
+              Perbarui informasi toko Anda agar pelanggan tetap update.
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-surface-100 rounded-xl transition-colors"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Body / Form */}
+        <div className="p-6 overflow-y-auto flex-1">
+          <form id="edit-profile-form" onSubmit={handleSubmit} className="space-y-6">
+            
+            {/* Cover Image Upload Section */}
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Foto Sampul Bisnis
+              </label>
+              
+              {/* Input File Tersembunyi */}
+              <input
+                type="file"
+                id="cover-image-input"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+              
+              {/* Trigger Area Klik */}
+              <label
+                htmlFor="cover-image-input"
+                className="relative h-36 border-2 border-dashed border-surface-200 rounded-2xl flex flex-col items-center justify-center text-slate-500 hover:bg-surface-50 hover:border-primary-300 transition-colors cursor-pointer overflow-hidden"
+              >
+                {imagePreview ? (
+                  <>
+                    <img
+                      src={imagePreview}
+                      alt="Preview Sampul"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-slate-900/40 opacity-0 hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white text-xs font-semibold gap-1 backdrop-blur-xs">
+                      <ImageIcon size={20} />
+                      <span>Ubah Foto Sampul</span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <ImageIcon size={28} className="mb-2 text-slate-400" />
+                    <span className="text-sm font-medium">
+                      Klik untuk mengubah foto sampul
+                    </span>
+                  </>
+                )}
+              </label>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Nama Bisnis */}
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Nama Bisnis
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Store size={16} className="text-slate-400" />
+                  </div>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-4 py-2.5 bg-surface-50 border border-surface-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all outline-none"
+                    placeholder="Nama bisnis Anda"
+                  />
+                </div>
+              </div>
+
+              {/* Jam Operasional */}
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Jam Operasional
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Clock size={16} className="text-slate-400" />
+                  </div>
+                  <input
+                    type="text"
+                    name="openHours"
+                    value={formData.openHours}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-4 py-2.5 bg-surface-50 border border-surface-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 transition-all outline-none"
+                    placeholder="Contoh: 09:00 - 22:00"
+                  />
+                </div>
+              </div>
+
+              {/* Harga Mulai */}
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Harga Mulai Dari
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <DollarSign size={16} className="text-slate-400" />
+                  </div>
+                  <input
+                    type="number"
+                    name="priceStart"
+                    value={formData.priceStart}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-4 py-2.5 bg-surface-50 border border-surface-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 transition-all outline-none"
+                    placeholder="Contoh: 15000"
+                  />
+                </div>
+              </div>
+
+              {/* Nomor WhatsApp */}
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Nomor WhatsApp
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Phone size={16} className="text-slate-400" />
+                  </div>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-4 py-2.5 bg-surface-50 border border-surface-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 transition-all outline-none"
+                    placeholder="628..."
+                  />
+                </div>
+              </div>
+
+              {/* Alamat Lengkap */}
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Alamat Lengkap
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 pt-3 pointer-events-none">
+                    <MapPin size={16} className="text-slate-400" />
+                  </div>
+                  <textarea
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    rows="2"
+                    className="w-full pl-10 pr-4 py-2.5 bg-surface-50 border border-surface-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 transition-all outline-none resize-none"
+                    placeholder="Alamat bisnis Anda..."
+                  ></textarea>
+                </div>
+              </div>
+
+              {/* Deskripsi */}
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Deskripsi Bisnis
+                </label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows="4"
+                  className="w-full p-4 bg-surface-50 border border-surface-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 transition-all outline-none resize-none"
+                  placeholder="Ceritakan tentang bisnis Anda..."
+                ></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        {/* Footer */}
+        <div className="p-6 border-t border-surface-100 flex items-center justify-end gap-3 bg-surface-50">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-white border border-surface-200 rounded-xl hover:bg-surface-100 transition-colors"
+          >
+            Batal
+          </button>
+          <button
+            type="submit"
+            form="edit-profile-form"
+            className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-primary-600 rounded-xl hover:bg-primary-700 shadow-md hover:shadow-lg transition-all active:scale-95"
+          >
+            <Save size={16} />
+            Simpan Perubahan
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+} 
+
+/* ==========================================
+   COMPONENT: StatCard
+   ========================================== */
+function StatCard({ icon: Icon, label, value, trend, trendValue, color = "primary" }) {
   const colorMap = {
     primary: "bg-primary-50 text-primary-600",
     green: "bg-green-50 text-green-600",
@@ -53,14 +327,14 @@ function StatCard({
   return (
     <div className="p-5 card card-hover">
       <div className="flex items-start justify-between mb-4">
-        <div
-          className={`w-12 h-12 rounded-2xl flex items-center justify-center ${colorMap[color]}`}
-        >
+        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${colorMap[color]}`}>
           <Icon size={22} />
         </div>
         {trendValue && (
           <div
-            className={`flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${isPositive ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"}`}
+            className={`flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${
+              isPositive ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"
+            }`}
           >
             {isPositive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
             {trendValue}
@@ -73,6 +347,9 @@ function StatCard({
   );
 }
 
+/* ==========================================
+   COMPONENT: AIInsightBox
+   ========================================== */
 function AIInsightBox() {
   return (
     <div className="relative p-6 overflow-hidden rounded-3xl bg-ai-gradient shadow-glow-blue">
@@ -80,19 +357,16 @@ function AIInsightBox() {
       <div className="relative z-10">
         <div className="flex items-center gap-2 mb-3">
           <Sparkles className="w-5 h-5 text-amber-300 ai-sparkle" />
-          <span className="text-sm font-bold text-white">
-            AI Business Insight
-          </span>
+          <span className="text-sm font-bold text-white">AI Business Insight</span>
           <span className="ml-auto bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">
             Live
           </span>
         </div>
         <p className="mb-4 text-sm leading-relaxed text-white/90">
-          Bisnis Anda tampil luar biasa bulan ini! 80% ulasan bernada positif —
-          tertinggi di kategori Teknologi.
-          <strong className="text-white"> Rekomendasi:</strong> Tambahkan foto
-          terbaru dan perluas jam operasional di hari Minggu untuk meningkatkan
-          konversi hingga ~15%.
+          Bisnis Anda tampil luar biasa bulan ini! 80% ulasan bernada positif — tertinggi
+          di kategori Teknologi.{" "}
+          <strong className="text-white"> Rekomendasi:</strong> Tambahkan foto terbaru
+          dan perluas jam operasional di hari Minggu untuk meningkatkan konversi hingga ~15%.
         </p>
         <div className="grid grid-cols-3 gap-3">
           {[
@@ -100,10 +374,7 @@ function AIInsightBox() {
             { label: "Response Rate", value: "94%", icon: "⚡" },
             { label: "Rank Kategori", value: "#1", icon: "🏆" },
           ].map(({ label, value, icon }) => (
-            <div
-              key={label}
-              className="p-3 text-center bg-white/10 rounded-2xl"
-            >
+            <div key={label} className="p-3 text-center bg-white/10 rounded-2xl">
               <div className="mb-1 text-lg">{icon}</div>
               <div className="text-base font-black text-white">{value}</div>
               <div className="text-white/60 text-xs mt-0.5">{label}</div>
@@ -115,15 +386,16 @@ function AIInsightBox() {
   );
 }
 
+/* ==========================================
+   COMPONENT: SentimentChart
+   ========================================== */
 function SentimentChart() {
   return (
     <div className="p-6 card">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="font-bold text-slate-900">Analisis Sentimen</h3>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Berdasarkan 134 ulasan terkini
-          </p>
+          <p className="text-xs text-slate-500 mt-0.5">Berdasarkan 134 ulasan terkini</p>
         </div>
         <BarChart2 size={18} className="text-slate-400" />
       </div>
@@ -155,9 +427,7 @@ function SentimentChart() {
             iconType="circle"
             iconSize={8}
             formatter={(value) => (
-              <span style={{ fontSize: "12px", color: "#64748b" }}>
-                {value}
-              </span>
+              <span style={{ fontSize: "12px", color: "#64748b" }}>{value}</span>
             )}
           />
         </PieChart>
@@ -167,9 +437,7 @@ function SentimentChart() {
       <div className="mt-4 space-y-3">
         {sentimentData.map(({ name, value, color }) => (
           <div key={name} className="flex items-center gap-3">
-            <span className="flex-shrink-0 text-xs text-slate-500 w-14">
-              {name}
-            </span>
+            <span className="flex-shrink-0 text-xs text-slate-500 w-14">{name}</span>
             <div className="flex-1 h-2 overflow-hidden rounded-full bg-surface-100">
               <div
                 className="h-full transition-all duration-700 rounded-full"
@@ -186,6 +454,9 @@ function SentimentChart() {
   );
 }
 
+/* ==========================================
+   COMPONENT: RecentReviewsCard
+   ========================================== */
 function RecentReviewsCard({ merchantReviews }) {
   const [replied, setReplied] = useState([]);
   return (
@@ -214,9 +485,7 @@ function RecentReviewsCard({ merchantReviews }) {
                 </span>
                 <StarRating rating={review.rating} size="sm" />
               </div>
-              <p className="mt-1 text-xs text-slate-500 line-clamp-2">
-                {review.text}
-              </p>
+              <p className="mt-1 text-xs text-slate-500 line-clamp-2">{review.text}</p>
               <div className="flex items-center gap-3 mt-2">
                 <span className="text-xs text-slate-400">{review.date}</span>
                 {replied.includes(review.id) ? (
@@ -240,36 +509,44 @@ function RecentReviewsCard({ merchantReviews }) {
   );
 }
 
-function QuickActions() {
+/* ==========================================
+   COMPONENT: QuickActions
+   ========================================== */
+function QuickActions({ onEditProfile }) {
   const actions = [
     {
       label: "Edit Profil",
       icon: Edit3,
       color: "text-primary-600 bg-primary-50 hover:bg-primary-100",
+      onClick: onEditProfile,
     },
     {
       label: "Bagikan Link",
       icon: Share2,
       color: "text-indigo-600 bg-indigo-50 hover:bg-indigo-100",
+      onClick: () => console.log("Bagikan Link diklik"),
     },
     {
       label: "Lihat di Goleet",
       icon: ExternalLink,
       color: "text-green-600 bg-green-50 hover:bg-green-100",
+      onClick: () => console.log("Lihat Goleet diklik"),
     },
     {
       label: "Upgrade Plan",
       icon: Crown,
       color: "text-amber-600 bg-amber-50 hover:bg-amber-100",
+      onClick: () => console.log("Upgrade Plan diklik"),
     },
   ];
   return (
     <div className="p-6 card">
       <h3 className="mb-4 font-bold text-slate-900">Aksi Cepat</h3>
       <div className="grid grid-cols-2 gap-3">
-        {actions.map(({ label, icon: Icon, color }) => (
+        {actions.map(({ label, icon: Icon, color, onClick }) => (
           <button
             key={label}
+            onClick={onClick}
             className={`flex flex-col items-center gap-2 p-4 rounded-2xl text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 ${color}`}
           >
             <Icon size={20} />
@@ -281,12 +558,26 @@ function QuickActions() {
   );
 }
 
+/* ==========================================
+   MAIN DASHBOARD COMPONENT
+   ========================================== */
 export default function MerchantDashboard() {
   const { user } = useAuth();
-  const merchant = merchants[0];
+  const navigate = useNavigate();
+
+  // Local state initialized with dummy data so the saved info can change dynamically
+  const [currentMerchant, setCurrentMerchant] = useState(merchants[0]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const merchantReviews = reviews.filter((r) => r.merchantId === "1");
 
-  const navigate = useNavigate();
+  const handleSaveProfile = (updatedData) => {
+    setCurrentMerchant((prev) => ({
+      ...prev,
+      ...updatedData,
+    }));
+    console.log("Data Berhasil Disimpan:", updatedData);
+  };
 
   return (
     <DashboardLayout variant="merchant">
@@ -318,10 +609,7 @@ export default function MerchantDashboard() {
         </div>
 
         {/* Stats Row */}
-        <div
-          id="merchant-overview"
-          className="grid grid-cols-2 gap-4 mb-8 lg:grid-cols-4"
-        >
+        <div id="merchant-overview" className="grid grid-cols-2 gap-4 mb-8 lg:grid-cols-4">
           <StatCard
             icon={Eye}
             label="Lihat Profil (30 hari)"
@@ -341,7 +629,7 @@ export default function MerchantDashboard() {
           <StatCard
             icon={Star}
             label="Total Ulasan"
-            value={merchant.reviewCount}
+            value={currentMerchant.reviewCount || 0}
             trend="up"
             trendValue="+6 baru"
             color="amber"
@@ -367,22 +655,22 @@ export default function MerchantDashboard() {
           {/* Right col - chart + quick actions */}
           <div id="merchant-analytics" className="space-y-6">
             <SentimentChart />
-            <QuickActions />
+            <QuickActions onEditProfile={() => setIsModalOpen(true)} />
 
             {/* Merchant info card */}
             <div className="p-5 card">
               <div className="flex items-center gap-3 mb-4">
                 <img
-                  src={merchant.image}
-                  alt={merchant.name}
+                  src={currentMerchant.image}
+                  alt={currentMerchant.name}
                   className="object-cover w-12 h-12 rounded-2xl"
                 />
                 <div>
-                  <p className="text-sm font-bold text-slate-900">
-                    {merchant.name}
+                  <p className="text-sm font-bold Sec text-slate-900">
+                    {currentMerchant.name}
                   </p>
                   <p className="text-xs text-slate-500">
-                    {merchant.categoryLabel}
+                    {currentMerchant.categoryLabel || "Kategori Bisnis"}
                   </p>
                 </div>
               </div>
@@ -393,17 +681,23 @@ export default function MerchantDashboard() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-400">Paket</span>
-                  <span className="font-semibold text-amber-600">
-                    Premium ⭐
-                  </span>
+                  <span className="font-semibold text-amber-600">Premium ⭐</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-400">Terverifikasi</span>
                   <span className="font-semibold text-primary-600">Ya ✓</span>
                 </div>
+                {currentMerchant.openHours && (
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Jam Buka</span>
+                    <span className="font-semibold text-slate-700">
+                      {currentMerchant.openHours}
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <span className="text-slate-400">Masa aktif</span>
-                  <span className="font-semibold">28 Mei 2026</span>
+                  <span className="font-semibold text-slate-700">28 Mei 2026</span>
                 </div>
               </div>
             </div>
@@ -418,6 +712,14 @@ export default function MerchantDashboard() {
           </p>
         </div>
       </div>
+
+      {/* Edit Profile Modal Injection */}
+      <EditProfileModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        merchant={currentMerchant}
+        onSave={handleSaveProfile}
+      />
     </DashboardLayout>
   );
 }
