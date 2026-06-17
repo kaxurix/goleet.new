@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Check,
   Megaphone,
@@ -6,8 +7,9 @@ import {
   Sparkles,
   Store,
   Star,
+  ArrowLeft,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const plans = [
   {
@@ -123,13 +125,6 @@ function PlanCard({ plan }) {
       <div className="relative p-7 sm:p-8">
         <div className="flex items-start justify-between gap-4 mb-6">
           <div>
-            {/* <span
-              className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold mb-4 ${
-                plan.featured ? 'bg-white/15 text-white border border-white/20' : 'bg-primary-50 text-primary-700'
-              }`}
-            >
-              {plan.badge}
-            </span> */}
             <h2
               className={`text-2xl font-black ${plan.featured ? "text-white" : "text-slate-900"}`}
             >
@@ -203,9 +198,30 @@ function PlanCard({ plan }) {
 }
 
 export default function Pricing() {
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("merchant"); // State switch button: "merchant" atau "ads"
+
+  // Memisahkan paket sesuai data slug
+  const merchantPlans = plans.filter((p) => ["free", "promo", "premium"].includes(p.slug));
+  const adsPlans = plans.filter((p) => p.slug === "banner");
+
   return (
-    <div className="bg-white">
-      <section className="relative overflow-hidden bg-hero-gradient pt-28 pb-20">
+    <div className="bg-white min-h-screen">
+      {/* Navbar Minimalis */}
+      <nav className="w-full bg-white border-b border-slate-100 px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between sticky top-0 z-40 shadow-sm backdrop-blur-md bg-white/80">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded-xl hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100"
+        >
+          <ArrowLeft size={16} /> Kembali
+        </button>
+        <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-slate-100 text-slate-500 select-none">
+          Version 2.0
+        </span>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-hero-gradient pt-20 pb-12">
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-0 left-0 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
           <div className="absolute right-0 bottom-0 h-80 w-80 rounded-full bg-cyan-400/20 blur-3xl" />
@@ -218,30 +234,71 @@ export default function Pricing() {
               <br />
               tapi tetap terasa siap jualan
             </h1>
-            <p className="mt-5 text-lg text-blue-100 leading-relaxed">
-              Mulai dari listing gratis sampai campaign banner untuk bisnis Anda
-              yang sedang berkembang.
+            <p className="mt-4 text-base text-blue-100 leading-relaxed">
+              Mulai dari listing gratis sampai campaign banner untuk bisnis Anda yang sedang berkembang.
             </p>
           </div>
         </div>
       </section>
 
-      <section className="py-16 bg-surface-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-10">
-            <h2 className="section-title">Pilih Paket yang Pas</h2>
-            <p className="section-subtitle">
-              Opsi fleksibel sesuai dengan tahap pertumbuhan bisnis Anda.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-stretch">
-            {plans.map((plan) => (
-              <PlanCard key={plan.title} plan={plan} />
-            ))}
-          </div>
+      {/* Switch Button Toggle Section */}
+      <div className="flex justify-center mt-10 mb-6">
+        <div className="relative flex p-1 bg-slate-100 rounded-2xl shadow-inner border border-slate-200/50">
+          <button
+            onClick={() => setActiveTab("merchant")}
+            className={`relative z-10 px-6 py-2.5 text-sm font-bold rounded-xl transition-all duration-300 ${
+              activeTab === "merchant"
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            Merchant Plans
+          </button>
+          <button
+            onClick={() => setActiveTab("ads")}
+            className={`relative z-10 px-6 py-2.5 text-sm font-bold rounded-xl transition-all duration-300 ${
+              activeTab === "ads"
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            Ads Section
+          </button>
         </div>
-      </section>
+      </div>
+
+      {/* Content Section (Rendered Conditionally based on activeTab) */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-20">
+        {activeTab === "merchant" ? (
+          <section className="animate-in fade-in duration-300">
+            <div className="text-center max-w-md mx-auto mb-10">
+              <h2 className="text-xl font-black text-slate-900">Merchant Plans</h2>
+              <p className="text-xs text-slate-500 mt-1">
+                Opsi pengelolaan lapak dan profil bisnis reguler Anda.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch justify-center max-w-5xl mx-auto">
+              {merchantPlans.map((plan) => (
+                <PlanCard key={plan.title} plan={plan} />
+              ))}
+            </div>
+          </section>
+        ) : (
+          <section className="animate-in fade-in duration-300">
+            <div className="text-center max-w-md mx-auto mb-10">
+              <h2 className="text-xl font-black text-slate-900">Ads Section</h2>
+              <p className="text-xs text-slate-500 mt-1">
+                Maksimalkan visibilitas brand dengan penempatan iklan premium.
+              </p>
+            </div>
+            <div className="grid grid-cols-1  gap-6 items-stretch justify-center max-w-5xl mx-auto">
+              {adsPlans.map((plan) => (
+                <PlanCard key={plan.title} plan={plan} />
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
     </div>
   );
 }
