@@ -385,7 +385,7 @@ function EditBannerAdModal({ isOpen, onClose, adData, onSave }) {
 
         <div className="p-5 space-y-5 text-sm">
           <div>
-            <label className="block text-slate-700 font-medium mb-1.5 flex items-center gap-2">
+            <label className="text-slate-700 font-medium mb-1.5 flex items-center gap-2">
               <ImageIcon size={16} className="text-primary-600" />
               Gambar Banner <span className="text-red-500">*</span>
             </label>
