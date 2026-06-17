@@ -20,9 +20,10 @@ import {
   CreditCard,
   Check,
   Image as ImageIcon,
-  QrCode, // Tambahkan QrCode untuk popup pembayaran
+  QrCode,
+  Star,
+  ArrowLeft,
 } from "lucide-react";
-import DashboardLayout from "../../layouts/DashboardLayout";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -42,6 +43,7 @@ const initialAds = [
     status: "active",
     views: 1250,
     clicks: 320,
+    ctr: "25.6%",
     budget: "Rp 500.000",
     spent: "Rp 150.000",
     imageUrl:
@@ -53,12 +55,21 @@ const initialAds = [
     status: "paused",
     views: 840,
     clicks: 110,
+    ctr: "13.1%",
     budget: "Rp 1.000.000",
     spent: "Rp 1.000.000",
     imageUrl:
       "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=300&h=150&fit=crop",
   },
 ];
+
+const initialMerchantReview = {
+  merchantName: "Kedai Kopi Selaras",
+  rating: 4,
+  comment:
+    "Pelayanannya cepat, tempatnya bersih, dan kopinya juara banget! Sangat direkomendasikan untuk tempat nongkrong atau WFH.",
+  date: "12 Juni 2026",
+};
 
 // --- SUB-COMPONENTS ---
 
@@ -78,7 +89,7 @@ function StatCard({
   };
   const isPositive = trend === "up";
   return (
-    <div className="p-5 bg-white border shadow-sm card card-hover rounded-3xl border-slate-100">
+    <div className="p-5 bg-white border shadow-sm card card-hover rounded-3xl border-slate-100 transition-all duration-300">
       <div className="flex items-start justify-between mb-4">
         <div
           className={`w-12 h-12 rounded-2xl flex items-center justify-center ${colorMap[color]}`}
@@ -132,6 +143,28 @@ function EditProfileModal({ isOpen, onClose, userData, onSave }) {
               }
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none transition-all"
             />
+            <label className="block text-slate-700 font-medium mb-1.5">
+              No Telfon
+            </label>
+            <input
+              type="phone"
+              value={formData.phone}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+            />
+            <label className="block text-slate-700 font-medium mb-1.5">
+              Alamat
+            </label>
+            <input
+              type="text"
+              value={formData.location}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+            />
           </div>
         </div>
         <div className="flex justify-end gap-3 p-5 border-t border-slate-100 bg-slate-50/50">
@@ -158,9 +191,8 @@ function EditProfileModal({ isOpen, onClose, userData, onSave }) {
 
 function PaymentPlanModal({ isOpen, onClose, onProceed }) {
   const [selectedPlan, setSelectedPlan] = useState("basic");
-  const [step, setStep] = useState("select"); // 'select' | 'payment'
+  const [step, setStep] = useState("select");
 
-  // Reset step ketika modal dibuka kembali
   useEffect(() => {
     if (isOpen) setStep("select");
   }, [isOpen]);
@@ -192,7 +224,6 @@ function PaymentPlanModal({ isOpen, onClose, onProceed }) {
         {step === "select" ? (
           <>
             <div className="p-5 space-y-4">
-              {/* Paket 1 */}
               <div
                 onClick={() => setSelectedPlan("basic")}
                 className={`cursor-pointer border-2 rounded-2xl p-4 transition-all flex items-center gap-4 ${selectedPlan === "basic" ? "border-primary-500 bg-primary-50/50" : "border-slate-100 hover:border-slate-200"}`}
@@ -219,7 +250,6 @@ function PaymentPlanModal({ isOpen, onClose, onProceed }) {
                 </div>
               </div>
 
-              {/* Paket 2 */}
               <div
                 onClick={() => setSelectedPlan("pro")}
                 className={`cursor-pointer border-2 rounded-2xl p-4 transition-all flex items-center gap-4 ${selectedPlan === "pro" ? "border-primary-500 bg-primary-50/50" : "border-slate-100 hover:border-slate-200"}`}
@@ -271,10 +301,7 @@ function PaymentPlanModal({ isOpen, onClose, onProceed }) {
           <>
             <div className="flex flex-col items-center justify-center p-8">
               <div className="relative flex items-center justify-center w-48 h-48 mb-4 overflow-hidden bg-white border-2 shadow-sm border-slate-200 rounded-2xl">
-                {/* Dummy QR Code (Bisa diganti dengan tag <img src="qr.png" /> nantinya) */}
                 <QrCode size={120} className="text-slate-800" strokeWidth={1} />
-
-                {/* Garis scanning animasi sederhana */}
                 <div className="absolute top-0 left-0 w-full h-1 bg-primary-500/50 shadow-[0_0_10px_2px_rgba(59,130,246,0.5)] animate-[scan_2s_ease-in-out_infinite]" />
               </div>
 
@@ -309,8 +336,6 @@ function PaymentPlanModal({ isOpen, onClose, onProceed }) {
           </>
         )}
       </div>
-
-      {/* Tambahkan style untuk animasi scanning pada QR code */}
       <style>{`
         @keyframes scan {
           0%, 100% { transform: translateY(0); }
@@ -325,7 +350,6 @@ function EditBannerAdModal({ isOpen, onClose, adData, onSave }) {
   const [formData, setFormData] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
 
-  // FIX: Sinkronkan state lokal dengan prop `adData` setiap kali modal dibuka/adData berubah
   useEffect(() => {
     if (isOpen && adData) {
       setFormData(adData);
@@ -360,7 +384,6 @@ function EditBannerAdModal({ isOpen, onClose, adData, onSave }) {
         </div>
 
         <div className="p-5 space-y-5 text-sm">
-          {/* Upload Banner Section */}
           <div>
             <label className="block text-slate-700 font-medium mb-1.5 flex items-center gap-2">
               <ImageIcon size={16} className="text-primary-600" />
@@ -458,6 +481,99 @@ function EditBannerAdModal({ isOpen, onClose, adData, onSave }) {
   );
 }
 
+// --- NEW MODAL: EDIT MERCHANT REVIEW ---
+function EditReviewModal({ isOpen, onClose, reviewData, onSave }) {
+  const [rating, setRating] = useState(reviewData.rating);
+  const [comment, setComment] = useState(reviewData.comment);
+  const [hoveredRating, setHoveredRating] = useState(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      setRating(reviewData.rating);
+      setComment(reviewData.comment);
+    }
+  }, [isOpen, reviewData]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 transition-all bg-slate-900/50 backdrop-blur-sm">
+      <div className="w-full max-w-md overflow-hidden duration-200 bg-white shadow-xl rounded-3xl animate-in fade-in zoom-in">
+        <div className="flex items-center justify-between p-5 border-b border-slate-100">
+          <h3 className="text-lg font-bold text-slate-900">Edit Ulasan Toko</h3>
+          <button
+            onClick={onClose}
+            className="p-2 transition-colors rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-50"
+          >
+            <X size={20} />
+          </button>
+        </div>
+        <div className="p-5 space-y-4 text-sm">
+          <div>
+            <label className="block text-slate-700 font-medium mb-2">
+              Rating untuk{" "}
+              <span className="font-bold text-slate-900">
+                {reviewData.merchantName}
+              </span>
+            </label>
+            <div className="flex items-center gap-1.5">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  onClick={() => setRating(star)}
+                  onMouseEnter={() => setHoveredRating(star)}
+                  onMouseLeave={() => setHoveredRating(null)}
+                  className="transition-transform duration-100 hover:scale-110 text-amber-400 focus:outline-none"
+                >
+                  <Star
+                    size={28}
+                    fill={
+                      (hoveredRating ?? rating) >= star
+                        ? "currentColor"
+                        : "none"
+                    }
+                    strokeWidth={2}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className="block text-slate-700 font-medium mb-1.5">
+              Isi Ulasan
+            </label>
+            <textarea
+              rows={4}
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder="Tulis pengalaman Anda di toko ini..."
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none transition-all resize-none"
+            />
+          </div>
+        </div>
+        <div className="flex justify-end gap-3 p-5 border-t border-slate-100 bg-slate-50/50">
+          <button
+            onClick={onClose}
+            className="px-5 py-2.5 text-slate-600 font-semibold hover:bg-slate-100 rounded-xl transition-colors"
+          >
+            Batal
+          </button>
+          <button
+            onClick={() => {
+              onSave({ ...reviewData, rating, comment });
+              onClose();
+            }}
+            className="px-5 py-2.5 bg-primary-600 text-white font-semibold rounded-xl hover:bg-primary-700 transition-colors shadow-sm"
+          >
+            Simpan Perubahan
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // --- MAIN DASHBOARD ---
 
 export default function UserDashboard() {
@@ -466,17 +582,23 @@ export default function UserDashboard() {
   // States
   const [userData, setUserData] = useState(initialUserData);
   const [adsData, setAdsData] = useState(initialAds);
+  const [reviewData, setReviewData] = useState(initialMerchantReview);
+
+  // Interactive Analytics Focus State (Null means completely hidden now)
+  const [selectedAnalyticsAd, setSelectedAnalyticsAd] = useState(null);
 
   const navigate = useNavigate();
 
   // Modal States
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [editingAd, setEditingAd] = useState(null);
   const [pendingBudget, setPendingBudget] = useState("");
 
   // Handlers
   const handleSaveProfile = (newData) => setUserData(newData);
+  const handleSaveReview = (updatedReview) => setReviewData(updatedReview);
 
   const handleInitiateNewAd = () => {
     setIsPaymentModalOpen(true);
@@ -490,10 +612,11 @@ export default function UserDashboard() {
 
   const handleSaveAd = (savedAd) => {
     if (savedAd.id) {
-      // Update iklan yang sudah ada
       setAdsData(adsData.map((ad) => (ad.id === savedAd.id ? savedAd : ad)));
+      if (selectedAnalyticsAd && selectedAnalyticsAd.id === savedAd.id) {
+        setSelectedAnalyticsAd(savedAd);
+      }
     } else {
-      // Buat iklan baru
       setAdsData([
         ...adsData,
         {
@@ -501,6 +624,7 @@ export default function UserDashboard() {
           id: Date.now(),
           views: 0,
           clicks: 0,
+          ctr: "0%",
           budget: pendingBudget,
           spent: "Rp 0",
         },
@@ -509,14 +633,29 @@ export default function UserDashboard() {
   };
 
   return (
-    <DashboardLayout variant="user">
-      <div className="p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-slate-50/50">
+      {/* Navbar Section */}
+      <nav className="w-full bg-white border-b border-slate-100 px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between sticky top-0 z-40 shadow-sm backdrop-blur-md bg-white/80">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded-xl hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100"
+        >
+          <ArrowLeft size={16} /> Kembali
+        </button>
+        <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-slate-100 text-slate-500 select-none">
+          Version 2.0
+        </span>
+      </nav>
+
+      <div className="p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto">
         {/* Welcome Header */}
         <div className="flex items-start justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-black text-slate-900">
-              Halo, {userData.name.split(" ")[0]}! 👋
-            </h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-black text-slate-900">
+                Halo, {userData.name.split(" ")[0]}! 👋
+              </h1>
+            </div>
             <p className="mt-1 text-sm text-slate-500">
               Kelola profil dan pantau performa iklan banner Anda hari ini.
             </p>
@@ -530,44 +669,60 @@ export default function UserDashboard() {
           </button>
         </div>
 
-        {/* Stats Row */}
-        <div className="grid grid-cols-2 gap-4 mb-8 lg:grid-cols-4">
-          <StatCard
-            icon={Megaphone}
-            label="Banner Aktif"
-            value={adsData.filter((a) => a.status === "active").length}
-            color="primary"
-          />
-          <StatCard
-            icon={Eye}
-            label="Total Tayangan"
-            value="2.090"
-            trend="up"
-            trendValue="+15%"
-            color="green"
-          />
-          <StatCard
-            icon={MousePointer}
-            label="Total Klik"
-            value="430"
-            trend="up"
-            trendValue="+5%"
-            color="amber"
-          />
-          <StatCard
-            icon={PlaySquare}
-            label="Click-Through Rate"
-            value="20.5%"
-            trend="up"
-            trendValue="+1.2%"
-            color="purple"
-          />
-        </div>
+        {/* Analytics Section - Rendered conditionally (Initial Hidden) */}
+        {selectedAnalyticsAd && (
+          <div className="mb-8 animate-in fade-in slide-in-from-top-4 duration-300">
+            {/* Interactive Analysis Title Bar */}
+            <div className="flex items-center justify-between mb-4 bg-white border border-slate-100 rounded-2xl px-5 py-3 shadow-sm">
+              <span className="text-sm font-bold text-slate-700">
+                Analisis: "{selectedAnalyticsAd.title}"
+              </span>
+              <button
+                onClick={() => setSelectedAnalyticsAd(null)}
+                className="p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-600 transition-colors"
+                title="Sembunyikan Analitik"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Stats Row */}
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+              <StatCard
+                icon={Megaphone}
+                label="Status Banner"
+                value={
+                  selectedAnalyticsAd.status === "active" ? "Aktif" : "Dijeda"
+                }
+                color="primary"
+              />
+              <StatCard
+                icon={Eye}
+                label="Total Tayangan"
+                value={selectedAnalyticsAd.views.toLocaleString()}
+                color="green"
+              />
+              <StatCard
+                icon={MousePointer}
+                label="Total Klik"
+                value={selectedAnalyticsAd.clicks.toLocaleString()}
+                color="amber"
+              />
+              <StatCard
+                icon={PlaySquare}
+                label="Click-Through Rate"
+                value={selectedAnalyticsAd.ctr}
+                color="purple"
+              />
+            </div>
+          </div>
+        )}
 
         {/* Main Grid */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {/* Left col - User Profile Card */}
+          {/* Left col - User Profile & Merchant Reviews */}
           <div className="space-y-6 lg:col-span-1">
+            {/* Profile Card */}
             <div className="relative p-6 overflow-hidden bg-white border shadow-sm card rounded-3xl border-slate-100">
               <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-primary-500 to-indigo-500" />
 
@@ -615,6 +770,52 @@ export default function UserDashboard() {
                 <Edit3 size={16} /> Edit Profil
               </button>
             </div>
+
+            {/* Merchant Review Card */}
+            <div className="p-6 bg-white border shadow-sm card rounded-3xl border-slate-100">
+              <div className="mb-4">
+                <h3 className="text-base font-bold text-slate-900">
+                  Ulasan Yang Diberikan
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Review yang pernah Anda berikan
+                </p>
+              </div>
+
+              <div className="bg-slate-50/70 border border-slate-100 rounded-2xl p-4">
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <h4 className="font-bold text-sm text-slate-800 truncate">
+                    {reviewData.merchantName}
+                  </h4>
+                  <span className="text-[10px] text-slate-400 font-medium flex-shrink-0">
+                    {reviewData.date}
+                  </span>
+                </div>
+
+                {/* Edit Button integrated directly next to store rating and stars */}
+                <div className="flex items-center justify-between mb-2.5">
+                  <div className="flex items-center gap-0.5 text-amber-400">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Star
+                        key={s}
+                        size={14}
+                        fill={reviewData.rating >= s ? "currentColor" : "none"}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => setIsReviewModalOpen(true)}
+                    className="flex items-center gap-1 text-[11px] font-bold text-primary-600 hover:text-primary-700 bg-white border border-slate-200 px-2 py-1 rounded-lg shadow-sm transition-colors"
+                  >
+                    <Edit3 size={10} /> Edit Review
+                  </button>
+                </div>
+
+                <p className="text-xs leading-relaxed text-slate-600 italic">
+                  "{reviewData.comment}"
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Right col - Ads Management */}
@@ -626,80 +827,88 @@ export default function UserDashboard() {
                     Manajemen Banner Iklan
                   </h3>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    Pantau dan edit banner yang sedang berjalan
+                    Klik baris banner untuk memunculkan analisis datanya di
+                    atas.
                   </p>
                 </div>
               </div>
 
               <div className="space-y-4">
-                {adsData.map((ad) => (
-                  <div
-                    key={ad.id}
-                    className="p-4 transition-all border group border-slate-100 rounded-2xl hover:border-primary-200 hover:shadow-md hover:shadow-primary-100/50 bg-slate-50/50"
-                  >
-                    <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-                      {/* Thumbnail Image */}
-                      <div className="flex-shrink-0 w-24 h-16 overflow-hidden border rounded-lg bg-slate-200 border-slate-200">
-                        {ad.imageUrl ? (
-                          <img
-                            src={ad.imageUrl}
-                            alt={ad.title}
-                            className="object-cover w-full h-full"
-                          />
-                        ) : (
-                          <div className="flex items-center justify-center w-full h-full">
-                            <ImageIcon className="text-slate-400" size={20} />
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex-1 w-full min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h4 className="text-base font-bold truncate text-slate-800">
-                            {ad.title}
-                          </h4>
-                          {ad.status === "active" ? (
-                            <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-green-100 text-green-700 px-2 py-0.5 rounded-md">
-                              <CheckCircle2 size={10} /> Aktif
-                            </span>
+                {adsData.map((ad) => {
+                  const isFocused = selectedAnalyticsAd?.id === ad.id;
+                  return (
+                    <div
+                      key={ad.id}
+                      onClick={() => setSelectedAnalyticsAd(ad)}
+                      className={`p-4 transition-all border cursor-pointer rounded-2xl group bg-slate-50/50 ${isFocused ? "border-primary-500 bg-primary-50/20 shadow-md shadow-primary-50" : "border-slate-100 hover:border-primary-200 hover:shadow-md hover:shadow-primary-100/50"}`}
+                    >
+                      <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+                        {/* Thumbnail Image */}
+                        <div className="flex-shrink-0 w-24 h-16 overflow-hidden border rounded-lg bg-slate-200 border-slate-200">
+                          {ad.imageUrl ? (
+                            <img
+                              src={ad.imageUrl}
+                              alt={ad.title}
+                              className="object-cover w-full h-full"
+                            />
                           ) : (
-                            <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-slate-200 text-slate-600 px-2 py-0.5 rounded-md">
-                              <AlertCircle size={10} /> Dijeda
-                            </span>
+                            <div className="flex items-center justify-center w-full h-full">
+                              <ImageIcon className="text-slate-400" size={20} />
+                            </div>
                           )}
                         </div>
-                        <div className="flex flex-wrap items-center mt-2 text-xs gap-x-4 gap-y-2 text-slate-500">
-                          <span className="flex items-center gap-1">
-                            <Eye size={14} className="text-slate-400" />{" "}
-                            {ad.views} Views
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <MousePointer
-                              size={14}
-                              className="text-slate-400"
-                            />{" "}
-                            {ad.clicks} Clicks
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <span className="font-medium text-slate-400">
-                              Dana:
-                            </span>{" "}
-                            {ad.spent} / {ad.budget}
-                          </span>
+
+                        <div className="flex-1 w-full min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="text-base font-bold truncate text-slate-800">
+                              {ad.title}
+                            </h4>
+                            {ad.status === "active" ? (
+                              <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-green-100 text-green-700 px-2 py-0.5 rounded-md">
+                                <CheckCircle2 size={10} /> Aktif
+                              </span>
+                            ) : (
+                              <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-slate-200 text-slate-600 px-2 py-0.5 rounded-md">
+                                <AlertCircle size={10} /> Dijeda
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex flex-wrap items-center mt-2 text-xs gap-x-4 gap-y-2 text-slate-500">
+                            <span className="flex items-center gap-1">
+                              <Eye size={14} className="text-slate-400" />{" "}
+                              {ad.views} Views
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <MousePointer
+                                size={14}
+                                className="text-slate-400"
+                              />{" "}
+                              {ad.clicks} Clicks
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <span className="font-medium text-slate-400">
+                                Dana:
+                              </span>{" "}
+                              {ad.spent} / {ad.budget}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div
+                          className="flex items-center w-full gap-2 mt-2 sm:ml-auto sm:w-auto sm:mt-0"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <button
+                            onClick={() => setEditingAd(ad)}
+                            className="flex items-center justify-center w-full gap-2 px-4 py-2 text-sm font-semibold transition-all bg-white border sm:w-auto border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 hover:text-primary-600 hover:border-primary-200"
+                          >
+                            <Edit3 size={14} /> Edit
+                          </button>
                         </div>
                       </div>
-
-                      <div className="flex items-center w-full gap-2 mt-2 sm:ml-auto sm:w-auto sm:mt-0">
-                        <button
-                          onClick={() => setEditingAd(ad)}
-                          className="flex items-center justify-center w-full gap-2 px-4 py-2 text-sm font-semibold transition-all bg-white border sm:w-auto border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 hover:text-primary-600 hover:border-primary-200"
-                        >
-                          <Edit3 size={14} /> Edit
-                        </button>
-                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
 
                 {adsData.length === 0 && (
                   <div className="py-10 text-center border-2 border-dashed bg-slate-50 rounded-2xl border-slate-200">
@@ -735,6 +944,13 @@ export default function UserDashboard() {
         adData={editingAd}
         onSave={handleSaveAd}
       />
-    </DashboardLayout>
+
+      <EditReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        reviewData={reviewData}
+        onSave={handleSaveReview}
+      />
+    </div>
   );
 }
