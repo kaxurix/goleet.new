@@ -20,7 +20,7 @@ import {
   CreditCard,
   Check,
   Image as ImageIcon,
-  QrCode, 
+  QrCode,
   Star,
   ArrowLeft,
 } from "lucide-react";
@@ -66,7 +66,8 @@ const initialAds = [
 const initialMerchantReview = {
   merchantName: "Kedai Kopi Selaras",
   rating: 4,
-  comment: "Pelayanannya cepat, tempatnya bersih, dan kopinya juara banget! Sangat direkomendasikan untuk tempat nongkrong atau WFH.",
+  comment:
+    "Pelayanannya cepat, tempatnya bersih, dan kopinya juara banget! Sangat direkomendasikan untuk tempat nongkrong atau WFH.",
   date: "12 Juni 2026",
 };
 
@@ -510,7 +511,10 @@ function EditReviewModal({ isOpen, onClose, reviewData, onSave }) {
         <div className="p-5 space-y-4 text-sm">
           <div>
             <label className="block text-slate-700 font-medium mb-2">
-              Rating untuk <span className="font-bold text-slate-900">{reviewData.merchantName}</span>
+              Rating untuk{" "}
+              <span className="font-bold text-slate-900">
+                {reviewData.merchantName}
+              </span>
             </label>
             <div className="flex items-center gap-1.5">
               {[1, 2, 3, 4, 5].map((star) => (
@@ -524,7 +528,11 @@ function EditReviewModal({ isOpen, onClose, reviewData, onSave }) {
                 >
                   <Star
                     size={28}
-                    fill={(hoveredRating ?? rating) >= star ? "currentColor" : "none"}
+                    fill={
+                      (hoveredRating ?? rating) >= star
+                        ? "currentColor"
+                        : "none"
+                    }
                     strokeWidth={2}
                   />
                 </button>
@@ -575,7 +583,7 @@ export default function UserDashboard() {
   const [userData, setUserData] = useState(initialUserData);
   const [adsData, setAdsData] = useState(initialAds);
   const [reviewData, setReviewData] = useState(initialMerchantReview);
-  
+
   // Interactive Analytics Focus State (Null means completely hidden now)
   const [selectedAnalyticsAd, setSelectedAnalyticsAd] = useState(null);
 
@@ -640,7 +648,6 @@ export default function UserDashboard() {
       </nav>
 
       <div className="p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto">
-        
         {/* Welcome Header */}
         <div className="flex items-start justify-between gap-4 mb-8">
           <div>
@@ -670,7 +677,7 @@ export default function UserDashboard() {
               <span className="text-sm font-bold text-slate-700">
                 Analisis: "{selectedAnalyticsAd.title}"
               </span>
-              <button 
+              <button
                 onClick={() => setSelectedAnalyticsAd(null)}
                 className="p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-600 transition-colors"
                 title="Sembunyikan Analitik"
@@ -684,7 +691,9 @@ export default function UserDashboard() {
               <StatCard
                 icon={Megaphone}
                 label="Status Banner"
-                value={selectedAnalyticsAd.status === "active" ? "Aktif" : "Dijeda"}
+                value={
+                  selectedAnalyticsAd.status === "active" ? "Aktif" : "Dijeda"
+                }
                 color="primary"
               />
               <StatCard
@@ -711,10 +720,8 @@ export default function UserDashboard() {
 
         {/* Main Grid */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          
           {/* Left col - User Profile & Merchant Reviews */}
           <div className="space-y-6 lg:col-span-1">
-            
             {/* Profile Card */}
             <div className="relative p-6 overflow-hidden bg-white border shadow-sm card rounded-3xl border-slate-100">
               <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-primary-500 to-indigo-500" />
@@ -767,8 +774,12 @@ export default function UserDashboard() {
             {/* Merchant Review Card */}
             <div className="p-6 bg-white border shadow-sm card rounded-3xl border-slate-100">
               <div className="mb-4">
-                <h3 className="text-base font-bold text-slate-900">Ulasan Toko Anda</h3>
-                <p className="text-xs text-slate-500">Review yang pernah Anda berikan</p>
+                <h3 className="text-base font-bold text-slate-900">
+                  Ulasan Yang Diberikan
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Review yang pernah Anda berikan
+                </p>
               </div>
 
               <div className="bg-slate-50/70 border border-slate-100 rounded-2xl p-4">
@@ -780,7 +791,7 @@ export default function UserDashboard() {
                     {reviewData.date}
                   </span>
                 </div>
-                
+
                 {/* Edit Button integrated directly next to store rating and stars */}
                 <div className="flex items-center justify-between mb-2.5">
                   <div className="flex items-center gap-0.5 text-amber-400">
@@ -799,13 +810,12 @@ export default function UserDashboard() {
                     <Edit3 size={10} /> Edit Review
                   </button>
                 </div>
-                
+
                 <p className="text-xs leading-relaxed text-slate-600 italic">
                   "{reviewData.comment}"
                 </p>
               </div>
             </div>
-
           </div>
 
           {/* Right col - Ads Management */}
@@ -817,7 +827,8 @@ export default function UserDashboard() {
                     Manajemen Banner Iklan
                   </h3>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    Klik baris banner untuk memunculkan analisis datanya di atas.
+                    Klik baris banner untuk memunculkan analisis datanya di
+                    atas.
                   </p>
                 </div>
               </div>
@@ -883,7 +894,10 @@ export default function UserDashboard() {
                           </div>
                         </div>
 
-                        <div className="flex items-center w-full gap-2 mt-2 sm:ml-auto sm:w-auto sm:mt-0" onClick={(e) => e.stopPropagation()}>
+                        <div
+                          className="flex items-center w-full gap-2 mt-2 sm:ml-auto sm:w-auto sm:mt-0"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <button
                             onClick={() => setEditingAd(ad)}
                             className="flex items-center justify-center w-full gap-2 px-4 py-2 text-sm font-semibold transition-all bg-white border sm:w-auto border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 hover:text-primary-600 hover:border-primary-200"
