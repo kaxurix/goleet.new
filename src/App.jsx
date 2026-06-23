@@ -12,6 +12,7 @@ import Pricing from "./pages/Pricing";
 import MerchantDashboard from "./pages/dashboard/MerchantDashboard";
 import UserDashboard from "./pages/dashboard/DashboardUser";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
+import Payment from "./pages/payment";
 
 function ProtectedRoute({ allowedRoles, children }) {
   const { isLoggedIn, user } = useAuth();
@@ -38,6 +39,7 @@ function AppRoutes() {
         <Route path="/claim" element={<Claim />} />
         <Route path="/banner-ads" element={<BannerAds />} />
         <Route path="/pricing" element={<Pricing />} />
+        <Route path="/payment" element={<Payment />} />
       </Route>
 
       {/* Auth - no shared layout */}

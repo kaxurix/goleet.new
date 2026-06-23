@@ -9,6 +9,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const plans = [
   {
@@ -106,9 +107,21 @@ const trustPoints = [
       "Strukturnya dibuat supaya pengunjung cepat paham beda tiap paket tanpa perlu membaca terlalu lama.",
   },
 ];
-
 function PlanCard({ plan }) {
   const Icon = plan.icon;
+  const navigate = useNavigate();
+  const { isLoggedIn } = useAuth(); // Mengambil status login dari context
+
+  const handlePlanSelection = () => {
+    if (!isLoggedIn) {
+      // Jika belum login, tendang ke halaman login
+      navigate("/auth");
+    } else {
+      // Jika sudah login, lanjutkan ke halaman pembayaran sesuai slug paket
+      const targetPath = plan.slug === "banner" ? "/payment?plan=banner" : `/payment?plan=${plan.slug}`;
+      navigate(targetPath);
+    }
+  };
 
   return (
     <article
@@ -179,9 +192,10 @@ function PlanCard({ plan }) {
           ))}
         </ul>
 
+        {/* BAGIAN BUTTON YANG SUDAH DILINDUNGI AUTHENTICATION */}
         <div className="mt-8">
-          <Link
-            to={plan.slug === "banner" ? "/banner-ads" : "/claim"}
+          <button
+            onClick={handlePlanSelection}
             className={`inline-flex w-full items-center justify-center rounded-2xl px-5 py-3 font-semibold transition-all duration-200 active:scale-95 ${
               plan.featured
                 ? "bg-white text-primary-700 hover:bg-blue-50"
@@ -189,7 +203,7 @@ function PlanCard({ plan }) {
             }`}
           >
             {plan.buttonText}
-          </Link>
+          </button>
         </div>
       </div>
     </article>
