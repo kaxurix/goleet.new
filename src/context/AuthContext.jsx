@@ -190,6 +190,31 @@ export function AuthProvider({ children }) {
     };
   };
 
+  const promoteToRegisteredMerchant = () => {
+    if (!user?.email) {
+      return {
+        ok: false,
+        error: "Sesi user tidak ditemukan.",
+      };
+    }
+
+    const updateResult = updateStoredAuthUser(user.email, {
+      role: "registered-merchant",
+    });
+
+    if (!updateResult.ok) {
+      return updateResult;
+    }
+
+    const upgradedUser = buildAuthenticatedUser(updateResult.user);
+    applySession(upgradedUser, true);
+
+    return {
+      ok: true,
+      user: upgradedUser,
+    };
+  };
+
   const logout = () => {
     applySession(null, false);
   };
@@ -203,6 +228,7 @@ export function AuthProvider({ children }) {
         login,
         register,
         updateProfile,
+        promoteToRegisteredMerchant,
         logout,
         loginAsMerchant,
         loginAsAdmin,

@@ -51,6 +51,16 @@ export default function Navbar() {
       ? [{ label: "Daftarkan Bisnis", to: "/claim" }]
       : []),
   ];
+  const canAccessDashboard =
+    user?.role === "admin" ||
+    user?.role === "user" ||
+    user?.role === "registered-merchant";
+  const dashboardPath =
+    user?.role === "admin"
+      ? "/dashboard/admin"
+      : user?.role === "registered-merchant"
+        ? "/dashboard/merchant"
+        : "/dashboard/user";
 
   const bgClass = isLanding
     ? scrolled
@@ -129,24 +139,19 @@ export default function Navbar() {
 
             {isLoggedIn ? (
               <div className="flex items-center gap-2">
-                <Link
-                  to={
-                    user?.role === "admin"
-                      ? "/dashboard/admin"
-                      : user?.role === "merchant" ||
-                          user?.role === "registered-merchant"
-                        ? "/dashboard/merchant"
-                        : "/dashboard/user"
-                  }
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                    isLanding && !scrolled
-                      ? "bg-white/20 text-white hover:bg-white/30"
-                      : "bg-primary-50 text-primary-700 hover:bg-primary-100"
-                  }`}
-                >
-                  <LayoutDashboard className="w-4 h-4" />
-                  Dashboard
-                </Link>
+                {canAccessDashboard && (
+                  <Link
+                    to={dashboardPath}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                      isLanding && !scrolled
+                        ? "bg-white/20 text-white hover:bg-white/30"
+                        : "bg-primary-50 text-primary-700 hover:bg-primary-100"
+                    }`}
+                  >
+                    <LayoutDashboard className="w-4 h-4" />
+                    Dashboard
+                  </Link>
+                )}
                 <button
                   onClick={handleLogout}
                   className={`p-2 rounded-lg transition-all ${textClass} hover:bg-white/10`}
@@ -221,22 +226,20 @@ export default function Navbar() {
           <div className="pt-2 border-t border-surface-100">
             {isLoggedIn ? (
               <>
-                <Link
-                  to={
-                    user?.role === "admin"
-                      ? "/dashboard/admin"
-                      : user?.role === "merchant"
-                        ? "/dashboard/merchant"
-                        : "/dashboard/user"
-                  }
-                  className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl text-primary-700 bg-primary-50"
-                >
-                  <LayoutDashboard className="w-4 h-4" />
-                  Dashboard
-                </Link>
+                {canAccessDashboard && (
+                  <Link
+                    to={dashboardPath}
+                    className="flex items-center gap-2 px-4 py-3 text-sm font-medium rounded-xl text-primary-700 bg-primary-50"
+                  >
+                    <LayoutDashboard className="w-4 h-4" />
+                    Dashboard
+                  </Link>
+                )}
                 <button
                   onClick={handleLogout}
-                  className="flex items-center w-full gap-2 px-4 py-3 mt-1 text-sm font-medium text-left text-red-600 rounded-xl hover:bg-red-50"
+                  className={`flex items-center w-full gap-2 px-4 py-3 text-sm font-medium text-left text-red-600 rounded-xl hover:bg-red-50 ${
+                    canAccessDashboard ? "mt-1" : ""
+                  }`}
                 >
                   <LogOut className="w-4 h-4" />
                   Keluar

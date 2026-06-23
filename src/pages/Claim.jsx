@@ -411,7 +411,7 @@ function SuccessScreen() {
  
 
 export default function Claim() {
-  const { setHasClaimedBusiness } = useAuth();
+  const { setHasClaimedBusiness, promoteToRegisteredMerchant } = useAuth();
   const [step, setStep] = useState(1);
   const [done, setDone] = useState(false);
   const [formData, setFormData] = useState({
@@ -433,6 +433,7 @@ export default function Claim() {
   const handleNext = () => {
     if (step < 3) setStep(step + 1);
     else {
+      promoteToRegisteredMerchant();
       setHasClaimedBusiness(true);
       setDone(true);
     }
