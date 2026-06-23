@@ -1,118 +1,159 @@
-import { Check, Megaphone, Rocket, Shield, Sparkles, Store, Star } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import {
+  Check,
+  Megaphone,
+  Rocket,
+  Shield,
+  Sparkles,
+  Store,
+  Star,
+  ArrowLeft,
+} from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const plans = [
   {
-    title: 'Lapak Gratis',
-    price: 'Rp 0',
-    description: 'Mulai tampil online dengan profil bisnis sederhana yang tetap terlihat rapi dan meyakinkan.',
+    slug: "free",
+    title: "Lapak Gratis",
+    price: "Rp 0",
+    description:
+      "Mulai tampil online dengan profil bisnis yang rapi dan meyakinkan.",
     icon: Store,
-    accent: 'from-slate-100 via-white to-blue-50',
-    badge: 'Mulai Cepat',
+    accent: "from-slate-100 via-white to-blue-50",
+    badge: "Tier 1 — Free",
     featured: false,
     benefits: [
-      'Profil bisnis dasar dengan alamat, kontak, dan jam operasional',
-      'Maksimal 5 foto produk atau layanan',
-      'Muncul di pencarian kategori lokal',
-      'Tombol WhatsApp langsung ke pelanggan',
+      "Profil bisnis + alamat, kontak, jam operasional",
+      "Maksimal 5 foto produk/layanan",
+      "Muncul di pencarian kategori lokal",
+      "Tombol WhatsApp langsung",
     ],
+    buttonText: "Mulai Gratis",
   },
   {
-    title: 'SaaS Premium',
-    price: 'Rp 99k',
-    description: 'Paket inti untuk bisnis yang ingin tampil lebih serius, lebih dipercaya, dan lebih mudah dipilih.',
+    slug: "promo",
+    title: "Booster Promo",
+    price: "Rp 49k/bulan",
+    description:
+      "Campaign pendek untuk promo, launching, atau event lokal—hasil cepat, biaya terjangkau.",
+    icon: Megaphone,
+    accent: "from-amber-100 via-orange-50 to-white",
+    badge: "Tier 2 — Most Popular",
+    featured: false,
+    benefits: [
+      "Highlight promosi di section rekomendasi",
+      "Template siap pakai + copy promo dibantu",
+      "Cocok diskon, launching, event lokal",
+      "Data campaign performa (klik, konversi)",
+    ],
+    buttonText: "Beli Sekarang",
+  },
+  {
+    slug: "premium",
+    title: "Premium Plus",
+    price: "Rp 99k/bulan",
+    description:
+      "Untuk bisnis yang ingin trust tinggi, visibilitas stabil, dan terus dapat leads.",
     icon: Rocket,
-    accent: 'from-primary-600 via-indigo-600 to-sky-500',
-    badge: 'Paling Populer',
+    accent: "from-primary-600 via-indigo-600 to-sky-500",
+    badge: "Tier 3 — Recommended",
     featured: true,
     benefits: [
-      'Semua fitur Lapak Gratis',
-      'Prioritas tampil di hasil pencarian pilihan',
-      'Insight performa profil dan klik pelanggan',
-      'Badge premium untuk meningkatkan trust',
-      'Bisa pasang promo mingguan dan highlight layanan unggulan',
+      "SEMUA fitur Booster Promo",
+      "Prioritas tampil di hasil pencarian",
+      "Badge premium + profile polish",
+      "Insight mendalam: visitor, engagement, trend",
+      "Promo mingguan + highlight layanan unggulan",
     ],
+    buttonText: "Pilih Premium",
   },
   {
-    title: 'Promote My Business',
-    price: 'Rp 49k',
-    description: 'Dorong campaign singkat untuk promo musiman, grand opening, atau produk baru yang butuh perhatian cepat.',
-    icon: Megaphone,
-    accent: 'from-amber-100 via-orange-50 to-white',
-    badge: 'Booster Promo',
-    featured: false,
-    benefits: [
-      'Highlight promosi selama periode campaign aktif',
-      'Slot tampil di section rekomendasi promosi',
-      'Copy promo singkat dibantu template siap pakai',
-      'Cocok untuk diskon, launching, atau event lokal',
-    ],
-  },
-  {
-    title: 'Banner dan Iklan',
-    price: 'Rp 500k',
-    description: 'Untuk brand yang ingin visibilitas besar lewat area banner utama dan placement yang lebih agresif.',
+    slug: "banner",
+    title: "Banner & Campaign Ads",
+    price: "Rp 500k/bulan",
+    description:
+      "Visibility maksimal lewat placement banner hero—untuk brand yang mau jangkauan besar.",
     icon: Star,
-    accent: 'from-emerald-100 via-cyan-50 to-white',
-    badge: 'Awareness Maksimal',
+    accent: "from-emerald-100 via-cyan-50 to-white",
+    badge: "Tier 4 — Scale Fast",
     featured: false,
     benefits: [
-      'Placement banner di area hero atau carousel promosi',
-      'Desain visual campaign dummy bisa dibantu tim',
-      'Jadwal tayang fleksibel sesuai kebutuhan campaign',
-      'Cocok untuk brand campaign, event, atau seasonal push',
+      "Placement di banner hero/carousel utama",
+      "Desain visual campaign—tim kami bantu",
+      "Jadwal tayang fleksibel (mingguan/bulanan)",
+      "Dashboard reporting + performance tracking",
     ],
+    buttonText: "Pasang Banner",
   },
 ];
 
 const trustPoints = [
   {
     icon: Shield,
-    title: 'Format yang familiar',
-    description: 'Setiap paket dirancang tetap konsisten dengan alur direktori bisnis dan gaya visual Goleet.id.',
+    title: "Format yang familiar",
+    description:
+      "Setiap paket dirancang tetap konsisten dengan alur direktori bisnis dan gaya visual Goleet.id.",
   },
   {
     icon: Sparkles,
-    title: 'Siap untuk dummy dulu',
-    description: 'Benefit saat ini dibuat sebagai placeholder yang tetap terasa realistis untuk presentasi atau validasi awal.',
+    title: "Siap untuk tumbuh",
+    description:
+      "Benefit dirancang untuk membantu UMKM bertransisi dari offline ke ekosistem digital dengan mudah.",
   },
   {
     icon: Check,
-    title: 'Fokus ke konversi',
-    description: 'Strukturnya dibuat supaya pengunjung cepat paham beda tiap paket tanpa perlu membaca terlalu lama.',
+    title: "Fokus ke konversi",
+    description:
+      "Strukturnya dibuat supaya pengunjung cepat paham beda tiap paket tanpa perlu membaca terlalu lama.",
   },
 ];
-
 function PlanCard({ plan }) {
   const Icon = plan.icon;
+  const navigate = useNavigate();
+  const { isLoggedIn } = useAuth(); // Mengambil status login dari context
+
+  const handlePlanSelection = () => {
+    if (!isLoggedIn) {
+      // Jika belum login, tendang ke halaman login
+      navigate("/auth");
+    } else {
+      // Jika sudah login, lanjutkan ke halaman pembayaran sesuai slug paket
+      const targetPath =
+        plan.slug === "banner" ? "/banner-ads" : `/payment?plan=${plan.slug}`;
+      navigate(targetPath);
+    }
+  };
 
   return (
     <article
       className={`relative rounded-3xl border transition-all duration-300 overflow-hidden ${
         plan.featured
-          ? 'bg-hero-gradient border-transparent shadow-2xl text-white hover:-translate-y-1'
-          : 'bg-white border-surface-100 shadow-card hover:shadow-card-hover hover:-translate-y-1'
+          ? "bg-hero-gradient border-transparent shadow-2xl text-white hover:-translate-y-1"
+          : "bg-white border-surface-100 shadow-card hover:shadow-card-hover hover:-translate-y-1"
       }`}
     >
-      <div className={`absolute inset-0 bg-gradient-to-br ${plan.accent} ${plan.featured ? 'opacity-20' : 'opacity-80'}`} />
+      <div
+        className={`absolute inset-0 bg-gradient-to-br ${plan.accent} ${plan.featured ? "opacity-20" : "opacity-80"}`}
+      />
       <div className="relative p-7 sm:p-8">
         <div className="flex items-start justify-between gap-4 mb-6">
           <div>
-            <span
-              className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold mb-4 ${
-                plan.featured ? 'bg-white/15 text-white border border-white/20' : 'bg-primary-50 text-primary-700'
-              }`}
+            <h2
+              className={`text-2xl font-black ${plan.featured ? "text-white" : "text-slate-900"}`}
             >
-              {plan.badge}
-            </span>
-            <h2 className={`text-2xl font-black ${plan.featured ? 'text-white' : 'text-slate-900'}`}>{plan.title}</h2>
-            <p className={`mt-2 text-sm leading-relaxed ${plan.featured ? 'text-blue-100' : 'text-slate-500'}`}>
+              {plan.title}
+            </h2>
+            <p
+              className={`mt-2 text-sm leading-relaxed ${plan.featured ? "text-blue-100" : "text-slate-500"}`}
+            >
               {plan.description}
             </p>
           </div>
           <div
             className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${
-              plan.featured ? 'bg-white/15 border border-white/20' : 'bg-slate-900 text-white'
+              plan.featured
+                ? "bg-white/15 border border-white/20"
+                : "bg-slate-900 text-white"
             }`}
           >
             <Icon className="w-6 h-6" />
@@ -120,8 +161,14 @@ function PlanCard({ plan }) {
         </div>
 
         <div className="mb-6">
-          <div className={`text-sm font-medium ${plan.featured ? 'text-blue-100' : 'text-slate-500'}`}>Mulai dari</div>
-          <div className={`text-4xl font-black tracking-tight ${plan.featured ? 'text-white' : 'text-slate-900'}`}>
+          <div
+            className={`text-sm font-medium ${plan.featured ? "text-blue-100" : "text-slate-500"}`}
+          >
+            Mulai dari
+          </div>
+          <div
+            className={`text-3xl font-black tracking-tight ${plan.featured ? "text-white" : "text-slate-900"}`}
+          >
             {plan.price}
           </div>
         </div>
@@ -130,31 +177,34 @@ function PlanCard({ plan }) {
           {plan.benefits.map((benefit) => (
             <li
               key={benefit}
-              className={`flex items-start gap-3 text-sm leading-relaxed ${plan.featured ? 'text-white/90' : 'text-slate-600'}`}
+              className={`flex items-start gap-3 text-sm leading-relaxed ${plan.featured ? "text-white/90" : "text-slate-600"}`}
             >
               <span
                 className={`mt-0.5 flex h-5 w-5 items-center justify-center rounded-full ${
-                  plan.featured ? 'bg-white/15' : 'bg-primary-50'
+                  plan.featured ? "bg-white/15" : "bg-primary-50"
                 }`}
               >
-                <Check className={`w-3.5 h-3.5 ${plan.featured ? 'text-white' : 'text-primary-600'}`} />
+                <Check
+                  className={`w-3.5 h-3.5 ${plan.featured ? "text-white" : "text-primary-600"}`}
+                />
               </span>
               <span>{benefit}</span>
             </li>
           ))}
         </ul>
 
+        {/* BAGIAN BUTTON YANG SUDAH DILINDUNGI AUTHENTICATION */}
         <div className="mt-8">
-          <Link
-            to="/claim"
+          <button
+            onClick={handlePlanSelection}
             className={`inline-flex w-full items-center justify-center rounded-2xl px-5 py-3 font-semibold transition-all duration-200 active:scale-95 ${
               plan.featured
-                ? 'bg-white text-primary-700 hover:bg-blue-50'
-                : 'bg-slate-900 text-white hover:bg-slate-800'
+                ? "bg-white text-primary-700 hover:bg-blue-50"
+                : "bg-slate-900 text-white hover:bg-slate-800"
             }`}
           >
-            Pilih Paket
-          </Link>
+            {plan.buttonText}
+          </button>
         </div>
       </div>
     </article>
@@ -162,86 +212,65 @@ function PlanCard({ plan }) {
 }
 
 export default function Pricing() {
-  return (
-    <div className="bg-white">
-      <section className="relative overflow-hidden bg-hero-gradient pt-28 pb-20">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-0 left-0 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
-          <div className="absolute right-0 bottom-0 h-80 w-80 rounded-full bg-cyan-400/20 blur-3xl" />
-        </div>
+  const navigate = useNavigate();
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="max-w-3xl text-center mx-auto">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm font-medium px-4 py-2 rounded-full mb-6">
-              <Sparkles className="w-4 h-4 text-amber-300" />
-              Paket untuk tampil, promosi, dan tumbuh
-            </div>
-            <h1 className="text-4xl sm:text-5xl font-black text-white leading-tight text-balance">
-              Pricing yang simpel,
-              <br />
-              tapi tetap terasa siap jualan
-            </h1>
-            <p className="mt-5 text-lg text-blue-100 leading-relaxed">
-              Halaman ini mengikuti gaya visual Goleet.id: hero gradien kuat, kartu membulat, copy ringkas, dan CTA yang langsung jelas.
+  // Memisahkan paket sesuai instruksi
+  const merchantPlans = plans.filter((p) =>
+    ["free", "promo", "premium"].includes(p.slug),
+  );
+  const adsPlans = plans.filter((p) => p.slug === "banner");
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Navbar Minimalis */}
+      <nav className="w-full bg-white border-b border-slate-100 px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between sticky top-0 z-40 shadow-sm backdrop-blur-md bg-white/80">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded-xl hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100"
+        >
+          <ArrowLeft size={16} /> Kembali
+        </button>
+        <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-slate-100 text-slate-500 select-none">
+          Version 2.0
+        </span>
+      </nav>
+
+      {/* Hero Section */}
+
+      {/* Content Section */}
+      <div className="flex flex-col items-center px-4 py-12 mx-auto space-y-16 max-w-7xl sm:px-6">
+        {/* Merchant Section */}
+        <section className="">
+          <div className="p-4 mb-8 bg-white border-b border-slate-100 rounded-xl">
+            <h2 className="text-2xl font-black text-slate-900">
+              Merchant Plans
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Opsi pengelolaan lapak dan profil bisnis reguler Anda.
             </p>
           </div>
-        </div>
-      </section>
-
-      <section className="py-16 bg-surface-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-10">
-            <h2 className="section-title">Pilih Paket yang Pas</h2>
-            <p className="section-subtitle">Mulai dari listing gratis sampai exposure penuh untuk campaign bisnis Anda.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-stretch">
-            {plans.map((plan) => (
+          <div className="grid items-stretch grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {merchantPlans.map((plan) => (
               <PlanCard key={plan.title} plan={plan} />
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-8 items-start">
-            <div className="card p-8">
-              <h2 className="section-title">Arah styling yang dipakai</h2>
-              <p className="section-subtitle">
-                Supaya page baru ini tidak terasa asing, saya pertahankan ritme visual yang sudah kuat di landing page dan komponen publik.
-              </p>
-              <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {trustPoints.map(({ icon: Icon, title, description }) => (
-                  <div key={title} className="rounded-2xl bg-surface-50 border border-surface-100 p-5">
-                    <div className="w-11 h-11 rounded-2xl bg-primary-600 flex items-center justify-center shadow-glow-blue mb-4">
-                      <Icon className="w-5 h-5 text-white" />
-                    </div>
-                    <h3 className="font-bold text-slate-900">{title}</h3>
-                    <p className="mt-2 text-sm text-slate-500 leading-relaxed">{description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="rounded-3xl bg-slate-900 text-white p-8 shadow-2xl">
-              <p className="text-sm uppercase tracking-[0.2em] text-primary-300">Next Step</p>
-              <h2 className="mt-3 text-3xl font-black leading-tight">Butuh paket custom untuk campaign lokal?</h2>
-              <p className="mt-4 text-slate-300 leading-relaxed">
-                Kita bisa arahkan pengguna ke alur klaim bisnis dulu, lalu tindak lanjuti penawaran sesuai kebutuhan promosi.
-              </p>
-              <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                <Link to="/claim" className="btn-primary justify-center">
-                  Klaim Bisnis
-                </Link>
-                <Link to="/search" className="btn-secondary justify-center">
-                  Lihat Direktori
-                </Link>
-              </div>
-            </div>
+        {/* Ads Section */}
+        <section>
+          <div className="pb-4 mb-8 border-b border-slate-100">
+            <h2 className="text-2xl font-black text-slate-900">Ads Section</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Maksimalkan visibilitas brand dengan penempatan iklan premium.
+            </p>
           </div>
-        </div>
-      </section>
+          <div className="grid items-stretch grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {adsPlans.map((plan) => (
+              <PlanCard key={plan.title} plan={plan} />
+            ))}
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

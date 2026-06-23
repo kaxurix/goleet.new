@@ -1,33 +1,36 @@
-import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Search as SearchIcon, SlidersHorizontal, X } from 'lucide-react';
-import { Icon } from '@iconify/react';
-import MerchantCard from '../components/MerchantCard';
-import { merchants, categories } from '../data/data';
+import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { Search as SearchIcon, SlidersHorizontal, X } from "lucide-react";
+import { Icon } from "@iconify/react";
+import MerchantCard from "../components/MerchantCard";
+import { merchants, categories } from "../data/data";
 
 const categoryIcons = {
-  kuliner: 'mdi:silverware-fork-knife',
-  otomotif: 'mdi:car-wrench',
-  teknologi: 'mdi:laptop',
-  fashion: 'mdi:tshirt-crew',
-  kesehatan: 'mdi:hospital-box',
-  pendidikan: 'mdi:book-education',
-  jasa: 'mdi:toolbox-outline',
-  hiburan: 'mdi:music-circle',
+  kuliner: "mdi:silverware-fork-knife",
+  otomotif: "mdi:car-wrench",
+  teknologi: "mdi:laptop",
+  fashion: "mdi:tshirt-crew",
+  kesehatan: "mdi:hospital-box",
+  pendidikan: "mdi:book-education",
+  jasa: "mdi:toolbox-outline",
+  hiburan: "mdi:music-circle",
 };
 
 export default function Search() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [query, setQuery] = useState(searchParams.get('q') || '');
-  const [selectedCat, setSelectedCat] = useState(searchParams.get('cat') || '');
-  const [sortBy, setSortBy] = useState('rating');
+  const [query, setQuery] = useState(searchParams.get("q") || "");
+  const [selectedCat, setSelectedCat] = useState(searchParams.get("cat") || "");
+  const [sortBy, setSortBy] = useState("rating");
   const [minRating, setMinRating] = useState(0);
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [isVerifiedExpanded, setIsVerifiedExpanded] = useState(false);
 
   const filtered = merchants
     .filter((m) => {
-      const matchQuery = !query || m.name.toLowerCase().includes(query.toLowerCase()) ||
+      const matchQuery =
+        !query ||
+        m.name.toLowerCase().includes(query.toLowerCase()) ||
         m.tags.some((t) => t.toLowerCase().includes(query.toLowerCase())) ||
         m.categoryLabel.toLowerCase().includes(query.toLowerCase());
       const matchCat = !selectedCat || m.category === selectedCat;
@@ -36,9 +39,9 @@ export default function Search() {
       return matchQuery && matchCat && matchRating && matchVerified;
     })
     .sort((a, b) => {
-      if (sortBy === 'rating') return b.rating - a.rating;
-      if (sortBy === 'reviews') return b.reviewCount - a.reviewCount;
-      if (sortBy === 'price') return a.priceStart - b.priceStart;
+      if (sortBy === "rating") return b.rating - a.rating;
+      if (sortBy === "reviews") return b.reviewCount - a.reviewCount;
+      if (sortBy === "price") return a.priceStart - b.priceStart;
       return 0;
     });
 
@@ -48,14 +51,15 @@ export default function Search() {
   };
 
   const clearFilter = () => {
-    setQuery('');
-    setSelectedCat('');
+    setQuery("");
+    setSelectedCat("");
     setMinRating(0);
     setVerifiedOnly(false);
     setSearchParams({});
   };
 
-  const hasActiveFilters = query || selectedCat || minRating > 0 || verifiedOnly;
+  const hasActiveFilters =
+    query || selectedCat || minRating > 0 || verifiedOnly;
 
   return (
     <div className="min-h-screen bg-surface-50 pt-16">
@@ -77,67 +81,44 @@ export default function Search() {
             <button type="submit" className="btn-primary px-6">
               Cari
             </button>
-            <button
-              type="button"
-              onClick={() => setShowFilters(!showFilters)}
-              className={`hidden items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all ${showFilters ? 'bg-primary-600 text-white border-primary-600' : 'bg-white text-slate-700 border-surface-200 hover:border-primary-300'}`}
-            >
-              <SlidersHorizontal className="w-4 h-4" />
-              <span className="hidden sm:inline">Filter</span>
-              {hasActiveFilters && <span className="w-2 h-2 rounded-full bg-amber-400" />}
-            </button>
           </form>
-
-          {/* Active filters */}
-          {hasActiveFilters && (
-            <div className="flex flex-wrap items-center gap-2 mt-3">
-              <span className="text-xs text-slate-500">Filter aktif:</span>
-              {query && (
-                <span className="flex items-center gap-1 bg-primary-50 text-primary-700 text-xs px-2.5 py-1 rounded-full">
-                  "{query}"
-                  <button onClick={() => setQuery('')}><X className="w-3 h-3" /></button>
-                </span>
-              )}
-              {selectedCat && (
-                <span className="flex items-center gap-1 bg-primary-50 text-primary-700 text-xs px-2.5 py-1 rounded-full">
-                  {categories.find((c) => c.id === selectedCat)?.label}
-                  <button onClick={() => setSelectedCat('')}><X className="w-3 h-3" /></button>
-                </span>
-              )}
-              {minRating > 0 && (
-                <span className="flex items-center gap-1 bg-amber-50 text-amber-700 text-xs px-2.5 py-1 rounded-full">
-                  ≥{minRating}★
-                  <button onClick={() => setMinRating(0)}><X className="w-3 h-3" /></button>
-                </span>
-              )}
-              <button onClick={clearFilter} className="text-xs text-red-500 hover:text-red-700 ml-1">Hapus semua</button>
-            </div>
-          )}
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        <div className="flex gap-8">
+        <div className="flex gap-8 items-start">
           {/* Sidebar Filters */}
-          <aside className={`${
-            showFilters ? 'block' : 'hidden lg:block'
-          } w-64 flex-shrink-0`}>
-            <div className="card p-5 sticky top-36">
+          <aside
+            className={`${
+              showFilters ? "block" : "hidden lg:block"
+            } w-64 flex-shrink-0 sticky top-32 self-start`}
+            style={{ height: "calc(100vh - 8rem)", overflowY: "auto" }}
+          >
+            <div className="card p-5">
               <div className="flex items-center justify-between mb-5">
                 <h3 className="font-bold text-slate-900">Filter</h3>
                 {hasActiveFilters && (
-                  <button onClick={clearFilter} className="text-xs text-primary-600 hover:text-primary-800">Reset</button>
+                  <button
+                    onClick={clearFilter}
+                    className="text-xs text-primary-600 hover:text-primary-800"
+                  >
+                    Reset
+                  </button>
                 )}
               </div>
 
               {/* Category */}
               <div className="mb-6">
-                <h4 className="text-sm font-semibold text-slate-700 mb-3">Kategori</h4>
+                <h4 className="text-sm font-semibold text-slate-700 mb-3">
+                  Kategori
+                </h4>
                 <div className="space-y-1.5">
                   <button
-                    onClick={() => setSelectedCat('')}
+                    onClick={() => setSelectedCat("")}
                     className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-all ${
-                      !selectedCat ? 'bg-primary-50 text-primary-700 font-medium' : 'text-slate-600 hover:bg-surface-50'
+                      !selectedCat
+                        ? "bg-primary-50 text-primary-700 font-medium"
+                        : "text-slate-600 hover:bg-surface-50"
                     }`}
                   >
                     Semua Kategori
@@ -147,10 +128,15 @@ export default function Search() {
                       key={cat.id}
                       onClick={() => setSelectedCat(cat.id)}
                       className={`w-full text-left flex items-center gap-2 text-sm px-3 py-2 rounded-lg transition-all ${
-                        selectedCat === cat.id ? 'bg-primary-50 text-primary-700 font-medium' : 'text-slate-600 hover:bg-surface-50'
+                        selectedCat === cat.id
+                          ? "bg-primary-50 text-primary-700 font-medium"
+                          : "text-slate-600 hover:bg-surface-50"
                       }`}
                     >
-                      <Icon icon={categoryIcons[cat.id] || 'mdi:shape-outline'} className="w-4 h-4 shrink-0" />
+                      <Icon
+                        icon={categoryIcons[cat.id] || "mdi:shape-outline"}
+                        className="w-4 h-4 shrink-0"
+                      />
                       <span>{cat.label}</span>
                     </button>
                   ))}
@@ -159,34 +145,24 @@ export default function Search() {
 
               {/* Min Rating */}
               <div className="mb-6">
-                <h4 className="text-sm font-semibold text-slate-700 mb-3">Rating Minimum</h4>
+                <h4 className="text-sm font-semibold text-slate-700 mb-3">
+                  Rating Minimum
+                </h4>
                 <div className="space-y-1.5">
-                  {[0, 3, 4, 4.5].map((r) => (
+                  {[0, 4.5].map((r) => (
                     <button
                       key={r}
                       onClick={() => setMinRating(r)}
                       className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-all ${
-                        minRating === r ? 'bg-primary-50 text-primary-700 font-medium' : 'text-slate-600 hover:bg-surface-50'
+                        minRating === r
+                          ? "bg-primary-50 text-primary-700 font-medium"
+                          : "text-slate-600 hover:bg-surface-50"
                       }`}
                     >
-                      {r === 0 ? 'Semua Rating' : `≥ ${r} Bintang`}
+                      {r === 0 ? "Semua Rating" : `≥ ${r} Bintang`}
                     </button>
                   ))}
                 </div>
-              </div>
-
-              {/* Verified only */}
-              <div>
-                <h4 className="text-sm font-semibold text-slate-700 mb-3">Status</h4>
-                <label className="flex items-center gap-2 cursor-pointer group">
-                  <input
-                    type="checkbox"
-                    checked={verifiedOnly}
-                    onChange={(e) => setVerifiedOnly(e.target.checked)}
-                    className="w-4 h-4 rounded border-surface-300 text-primary-600 focus:ring-primary-500"
-                  />
-                  <span className="text-sm text-slate-600 group-hover:text-slate-800">Verified Pro saja</span>
-                </label>
               </div>
             </div>
           </aside>
@@ -196,7 +172,11 @@ export default function Search() {
             {/* Sort & count bar */}
             <div className="flex items-center justify-between mb-6">
               <p className="text-sm text-slate-500">
-                Menampilkan <span className="font-semibold text-slate-800">{filtered.length}</span> bisnis
+                Menampilkan{" "}
+                <span className="font-semibold text-slate-800">
+                  {filtered.length}
+                </span>{" "}
+                bisnis
               </p>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-slate-500">Urutkan:</span>
@@ -215,15 +195,115 @@ export default function Search() {
             {filtered.length === 0 ? (
               <div className="text-center py-24">
                 <div className="text-6xl mb-4">🔍</div>
-                <h3 className="font-bold text-slate-800 text-lg mb-2">Bisnis tidak ditemukan</h3>
-                <p className="text-slate-500 mb-6">Coba ubah kata kunci atau hapus filter yang aktif</p>
-                <button onClick={clearFilter} className="btn-primary">Reset Filter</button>
+                <h3 className="font-bold text-slate-800 text-lg mb-2">
+                  Bisnis tidak ditemukan
+                </h3>
+                <p className="text-slate-500 mb-6">
+                  Coba ubah kata kunci atau hapus filter yang aktif
+                </p>
+                <button onClick={clearFilter} className="btn-primary">
+                  Reset Filter
+                </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filtered.map((merchant) => (
-                  <MerchantCard key={merchant.id} merchant={merchant} />
-                ))}
+              <div className="space-y-10">
+                {/* Verified Pro Group */}
+                {filtered.filter((m) => m.verified).length > 0 && (
+                  <section>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <Icon
+                          icon="hugeicons:promotion"
+                          className="w-6 h-6 text-blue-500"
+                        />
+                        <h2 className="text-xl font-bold text-slate-800">
+                          Promosi Berbayar
+                        </h2>
+                      </div>
+                      <button
+                        onClick={() =>
+                          setIsVerifiedExpanded(!isVerifiedExpanded)
+                        }
+                        className="text-sm font-medium text-primary-600 hover:text-primary-700 flex items-center gap-1"
+                      >
+                        {isVerifiedExpanded
+                          ? "Tampilkan Lebih Sedikit"
+                          : "Lihat Semua"}
+                        <Icon
+                          icon={
+                            isVerifiedExpanded
+                              ? "mdi:chevron-up"
+                              : "mdi:chevron-down"
+                          }
+                          className="w-4 h-4"
+                        />
+                      </button>
+                    </div>
+
+                    {isVerifiedExpanded ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                        {filtered
+                          .filter((m) => m.verified)
+                          .map((merchant) => (
+                            <MerchantCard
+                              key={merchant.id}
+                              merchant={merchant}
+                            />
+                          ))}
+                      </div>
+                    ) : (
+                      <div
+                        className="flex overflow-x-auto gap-6 pb-4 snap-x snap-mandatory"
+                        style={{ scrollbarWidth: "thin" }}
+                      >
+                        {filtered
+                          .filter((m) => m.verified)
+                          .map((merchant) => (
+                            <div
+                              key={merchant.id}
+                              className="w-[420px] sm:w-[360px] snap-start flex-shrink-0"
+                            >
+                              <MerchantCard merchant={merchant} />
+                            </div>
+                          ))}
+                      </div>
+                    )}
+                  </section>
+                )}
+
+                {/* Unverified Group 1 - Rekomendasi Terbaik (Rating >= 4.5) */}
+                {filtered.filter((m) => !m.verified && m.rating >= 4.5).length >
+                  0 && (
+                  <section>
+                    <h2 className="text-xl font-bold text-slate-800 mb-4">
+                      Rekomendasi Terbaik
+                    </h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                      {filtered
+                        .filter((m) => !m.verified && m.rating >= 4.5)
+                        .map((merchant) => (
+                          <MerchantCard key={merchant.id} merchant={merchant} />
+                        ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* Unverified Group 2 - Pilihan Lainnya (Rating < 4.5) */}
+                {filtered.filter((m) => !m.verified && m.rating < 4.5).length >
+                  0 && (
+                  <section>
+                    <h2 className="text-xl font-bold text-slate-800 mb-4">
+                      Pilihan Lainnya
+                    </h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                      {filtered
+                        .filter((m) => !m.verified && m.rating < 4.5)
+                        .map((merchant) => (
+                          <MerchantCard key={merchant.id} merchant={merchant} />
+                        ))}
+                    </div>
+                  </section>
+                )}
               </div>
             )}
           </div>

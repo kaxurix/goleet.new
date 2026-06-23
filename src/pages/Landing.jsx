@@ -13,7 +13,9 @@ import {
 } from "lucide-react";
 import { Icon } from "@iconify/react";
 import MerchantCard from "../components/MerchantCard";
-import { merchants, categories, banners } from "../data/data";
+import { merchants, categories } from "../data/data";
+import { useBanner } from "../hooks/useBanner";
+import { useAuth } from "../context/AuthContext";
 
 const categoryIcons = {
   kuliner: "mdi:silverware-fork-knife",
@@ -27,15 +29,15 @@ const categoryIcons = {
 };
 
 const categoryIconColorClass = {
-  kuliner: "text-orange-50",
-  otomotif: "text-cyan-50",
-  teknologi: "text-indigo-50",
-  fashion: "text-rose-50",
-  kesehatan: "text-emerald-50",
+  kuliner: "text-white",
+  otomotif: "text-white",
+  teknologi: "text-white",
+  fashion: "text-white",
+  kesehatan: "text-white",
   // Gradient kuning cenderung lebih terang, icon gelap lebih kebaca.
-  pendidikan: "text-slate-900/90",
-  jasa: "text-slate-50",
-  hiburan: "text-fuchsia-50",
+  pendidikan: "text-white",
+  jasa: "text-white",
+  hiburan: "text-white",
 };
 
 function HeroSection() {
@@ -66,10 +68,10 @@ function HeroSection() {
 
       <div className="relative z-10 max-w-4xl px-4 pt-24 pb-32 mx-auto text-center sm:px-6">
         {/* Eyebrow */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 text-sm font-medium text-white border rounded-full bg-white/10 backdrop-blur-sm border-white/20 animate-fade-in">
+        {/* <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 text-sm font-medium text-white border rounded-full bg-white/10 backdrop-blur-sm border-white/20 animate-fade-in">
           <Sparkles className="w-4 h-4 text-amber-300" />
           Direktori Bisnis Lokal #1 di Purbalingga
-        </div>
+        </div> */}
 
         {/* Headline */}
         <h1 className="mb-6 text-4xl font-black leading-tight text-white sm:text-5xl lg:text-6xl animate-slide-up text-balance">
@@ -179,34 +181,41 @@ function HeroSection() {
 }
 
 function BannerCarousel() {
+  const { liveBanners } = useBanner();
   const [current, setCurrent] = useState(0);
   const intervalRef = useRef(null);
-
-  const startAuto = () => {
-    intervalRef.current = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % banners.length);
-    }, 4000);
-  };
+  const bannerItems = liveBanners;
+  const currentIndex =
+    bannerItems.length === 0 ? 0 : current % bannerItems.length;
 
   useEffect(() => {
-    startAuto();
+    clearInterval(intervalRef.current);
+    if (bannerItems.length <= 1) return undefined;
+
+    intervalRef.current = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % bannerItems.length);
+    }, 4000);
+
     return () => clearInterval(intervalRef.current);
-  }, []);
+  }, [bannerItems.length]);
 
   const goTo = (idx) => {
     setCurrent(idx);
     clearInterval(intervalRef.current);
-    startAuto();
+    if (bannerItems.length <= 1) return;
+    intervalRef.current = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % bannerItems.length);
+    }, 4000);
   };
 
   return (
     <section className="py-12 bg-white">
       <div className="px-4 mx-auto max-w-7xl sm:px-6">
         <div className="relative h-64 overflow-hidden shadow-2xl rounded-3xl sm:h-80">
-          {banners.map((banner, idx) => (
+          {bannerItems.map((banner, idx) => (
             <div
               key={banner.id}
-              className={`absolute inset-0 transition-opacity duration-700 ${idx === current ? "opacity-100 z-10" : "opacity-0 z-0"}`}
+              className={`absolute inset-0 transition-opacity duration-700 ${idx === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"}`}
             >
               <img
                 src={banner.image}
@@ -234,11 +243,11 @@ function BannerCarousel() {
 
           {/* Dot indicators */}
           <div className="absolute z-20 flex gap-2 -translate-x-1/2 bottom-5 left-1/2">
-            {banners.map((_, idx) => (
+            {bannerItems.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => goTo(idx)}
-                className={`h-2 rounded-full transition-all duration-300 ${idx === current ? "bg-white w-8" : "bg-white/40 w-2"}`}
+                className={`h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? "bg-white w-8" : "bg-white/40 w-2"}`}
               />
             ))}
           </div>
@@ -246,14 +255,14 @@ function BannerCarousel() {
           {/* Arrows */}
           <button
             onClick={() =>
-              goTo((current - 1 + banners.length) % banners.length)
+              goTo((currentIndex - 1 + bannerItems.length) % bannerItems.length)
             }
             className="absolute z-20 flex items-center justify-center w-10 h-10 text-white transition-all -translate-y-1/2 rounded-full left-4 top-1/2 bg-black/30 hover:bg-black/50"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
-            onClick={() => goTo((current + 1) % banners.length)}
+            onClick={() => goTo((currentIndex + 1) % bannerItems.length)}
             className="absolute z-20 flex items-center justify-center w-10 h-10 text-white transition-all -translate-y-1/2 rounded-full right-4 top-1/2 bg-black/30 hover:bg-black/50"
           >
             <ChevronRight className="w-5 h-5" />
@@ -288,12 +297,12 @@ function CategoryGrid() {
             >
               {/* Subtle gradient blob behind icon */}
               <div
-                className={`absolute inset-0 bg-gradient-to-br ${cat.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-3xl`}
+                className={`absolute inset-0 bg-primary-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-3xl`}
               />
 
               {/* Icon container */}
               <div
-                className={`relative w-16 h-16 rounded-2xl bg-gradient-to-br ${cat.gradient} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                className={`relative w-16 h-16 rounded-2xl bg-primary-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}
               >
                 <Icon
                   icon={categoryIcons[cat.id] || "mdi:shape-outline"}
@@ -313,7 +322,7 @@ function CategoryGrid() {
 
               {/* Active indicator */}
               <div
-                className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-1 w-0 group-hover:w-12 bg-gradient-to-r ${cat.gradient} rounded-full transition-all duration-300`}
+                className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-1 w-0 group-hover:w-12 bg-primary-600 rounded-full transition-all duration-300`}
               />
             </button>
           ))}
@@ -462,16 +471,120 @@ function CTABanner() {
     </section>
   );
 }
-
 export default function Landing() {
+  const { user, loginAsAdmin, loginAsMerchant, loginAsUser, logout } =
+    useAuth();
+
+  // State untuk mengontrol apakah dialog terbuka atau tertutup
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Membuka/menutup dialog menggunakan Ctrl + K
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.ctrlKey && e.key === "k") {
+        e.preventDefault();
+        setIsDialogOpen((prev) => !prev);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Fungsi untuk menangani perubahan saat memilih dropdown
+  const handleRoleSelection = (e) => {
+    const selectedRole = e.target.value;
+
+    if (selectedRole === "admin") loginAsAdmin();
+    else if (selectedRole === "merchant") loginAsMerchant();
+    else if (selectedRole === "user") loginAsUser();
+    else logout(); // Untuk guest / tidak ada sesi
+
+    // Tutup dialog setelah memilih
+    setIsDialogOpen(false);
+  };
+
   return (
-    <div>
+    <div style={{ position: "relative", minHeight: "100vh" }}>
       <HeroSection />
       <BannerCarousel />
       <TopRecommendations />
       <CategoryGrid />
       <WhyGoleet />
       <CTABanner />
+
+      {/* --- Dialog Card --- */}
+      {isDialogOpen && (
+        <div style={styles.overlay}>
+          <div style={styles.card}>
+            <h3 style={{ marginTop: 0, marginBottom: "15px" }}>
+              Pilih Role Simulasi
+            </h3>
+
+            <select
+              value={user?.role || "guest"}
+              onChange={handleRoleSelection}
+              style={styles.selectInput}
+            >
+              <option value="guest">Guest</option>
+              <option value="user">User</option>
+              <option value="merchant">Merchant</option>
+              <option value="admin">Admin</option>
+            </select>
+
+            <button
+              onClick={() => setIsDialogOpen(false)}
+              style={styles.closeButton}
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
+// Objek style sederhana untuk Card Dialog (Bisa diganti menggunakan Tailwind/CSS Modules)
+const styles = {
+  overlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 9999, // Memastikan dialog selalu berada di paling atas
+  },
+  card: {
+    backgroundColor: "#fff",
+    padding: "24px",
+    borderRadius: "12px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+    width: "300px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+  },
+  selectInput: {
+    padding: "10px",
+    borderRadius: "6px",
+    border: "1px solid #ccc",
+    fontSize: "16px",
+    width: "100%",
+    marginBottom: "15px",
+    cursor: "pointer",
+  },
+  closeButton: {
+    padding: "10px",
+    backgroundColor: "#ef4444",
+    color: "#fff",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontWeight: "bold",
+  },
+};

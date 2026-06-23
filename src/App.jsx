@@ -1,30 +1,31 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import PublicLayout from './layouts/PublicLayout';
-import Landing from './pages/Landing';
-import Search from './pages/Search';
-import MerchantDetail from './pages/MerchantDetail';
-import Claim from './pages/Claim';
-import Auth from './pages/Auth';
-import Pricing from './pages/Pricing';
-import MerchantDashboard from './pages/dashboard/MerchantDashboard';
-import AdminDashboard from './pages/dashboard/AdminDashboard';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { BannerProvider } from "./context/BannerContext";
+import PublicLayout from "./layouts/PublicLayout";
+import Landing from "./pages/Landing";
+import Search from "./pages/Search";
+import MerchantDetail from "./pages/MerchantDetail";
+import Claim from "./pages/Claim";
+import BannerAds from "./pages/BannerAds";
+import Auth from "./pages/Auth";
+import Pricing from "./pages/Pricing";
+import MerchantDashboard from "./pages/dashboard/MerchantDashboard";
+import UserDashboard from "./pages/dashboard/DashboardUser";
+import AdminDashboard from "./pages/dashboard/AdminDashboard";
+import Payment from "./pages/payment";
 
-function ProtectedMerchant() {
-  const { isLoggedIn, loginAsMerchant } = useAuth();
-  if (!isLoggedIn) {
-    // Auto-login as merchant for demo purposes
-    loginAsMerchant();
-  }
-  return <MerchantDashboard />;
-}
+function ProtectedRoute({ allowedRoles, children }) {
+  const { isLoggedIn, user } = useAuth();
 
-function ProtectedAdmin() {
-  const { isLoggedIn, loginAsAdmin } = useAuth();
-  if (!isLoggedIn) {
-    loginAsAdmin();
+  if (!isLoggedIn || !user) {
+    return <Navigate to="/auth" replace />;
   }
-  return <AdminDashboard />;
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
 }
 
 function AppRoutes() {
@@ -36,16 +37,47 @@ function AppRoutes() {
         <Route path="/search" element={<Search />} />
         <Route path="/merchant/:id" element={<MerchantDetail />} />
         <Route path="/claim" element={<Claim />} />
+        <Route path="/banner-ads" element={<BannerAds />} />
         <Route path="/pricing" element={<Pricing />} />
+        <Route path="/payment" element={<Payment />} />
       </Route>
 
       {/* Auth - no shared layout */}
       <Route path="/auth" element={<Auth />} />
 
       {/* Dashboard Routes */}
-      <Route path="/dashboard/merchant" element={<ProtectedMerchant />} />
-      <Route path="/dashboard/admin" element={<ProtectedAdmin />} />
-      <Route path="/admin" element={<ProtectedAdmin />} />
+      <Route
+        path="/dashboard/merchant"
+        element={
+          <ProtectedRoute allowedRoles={["merchant", "registered-merchant"]}>
+            <MerchantDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/admin"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/user"
+        element={
+          <ProtectedRoute allowedRoles={["user"]}>
+            <UserDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
@@ -57,7 +89,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppRoutes />
+        <BannerProvider>
+          <AppRoutes />
+        </BannerProvider>
       </AuthProvider>
     </BrowserRouter>
   );
