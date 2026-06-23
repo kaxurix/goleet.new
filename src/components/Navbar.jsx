@@ -38,6 +38,11 @@ export default function Navbar() {
     navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate("/", { replace: true });
+  };
+
   const navLinks = [
     { label: "Beranda", to: "/" },
     { label: "Cari Bisnis", to: "/search" },
@@ -128,7 +133,8 @@ export default function Navbar() {
                   to={
                     user?.role === "admin"
                       ? "/dashboard/admin"
-                      : user?.role === "merchant"
+                      : user?.role === "merchant" ||
+                          user?.role === "registered-merchant"
                         ? "/dashboard/merchant"
                         : "/dashboard/user"
                   }
@@ -142,7 +148,7 @@ export default function Navbar() {
                   Dashboard
                 </Link>
                 <button
-                  onClick={logout}
+                  onClick={handleLogout}
                   className={`p-2 rounded-lg transition-all ${textClass} hover:bg-white/10`}
                   title="Keluar"
                 >
@@ -229,7 +235,7 @@ export default function Navbar() {
                   Dashboard
                 </Link>
                 <button
-                  onClick={logout}
+                  onClick={handleLogout}
                   className="flex items-center w-full gap-2 px-4 py-3 mt-1 text-sm font-medium text-left text-red-600 rounded-xl hover:bg-red-50"
                 >
                   <LogOut className="w-4 h-4" />

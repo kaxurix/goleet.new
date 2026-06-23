@@ -13,21 +13,18 @@ import MerchantDashboard from "./pages/dashboard/MerchantDashboard";
 import UserDashboard from "./pages/dashboard/DashboardUser";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
 
-function ProtectedMerchant() {
-  const { isLoggedIn, loginAsMerchant } = useAuth();
-  if (!isLoggedIn) {
-    // Auto-login as merchant for demo purposes
-    loginAsMerchant();
-  }
-  return <MerchantDashboard />;
-}
+function ProtectedRoute({ allowedRoles, children }) {
+  const { isLoggedIn, user } = useAuth();
 
-function ProtectedAdmin() {
-  const { isLoggedIn, loginAsAdmin } = useAuth();
-  if (!isLoggedIn) {
-    loginAsAdmin();
+  if (!isLoggedIn || !user) {
+    return <Navigate to="/auth" replace />;
   }
-  return <AdminDashboard />;
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
 }
 
 function AppRoutes() {
@@ -47,10 +44,38 @@ function AppRoutes() {
       <Route path="/auth" element={<Auth />} />
 
       {/* Dashboard Routes */}
-      <Route path="/dashboard/merchant" element={<ProtectedMerchant />} />
-      <Route path="/dashboard/admin" element={<ProtectedAdmin />} />
-      <Route path="/dashboard/user" element={<UserDashboard />} />
-      <Route path="/admin" element={<ProtectedAdmin />} />
+      <Route
+        path="/dashboard/merchant"
+        element={
+          <ProtectedRoute allowedRoles={["merchant", "registered-merchant"]}>
+            <MerchantDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/admin"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/user"
+        element={
+          <ProtectedRoute allowedRoles={["user"]}>
+            <UserDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />

@@ -31,7 +31,7 @@ import { useNavigate } from "react-router-dom";
 const initialUserData = {
   name: "Budi Santoso",
   email: "budi.santoso@example.com",
-  phone: "+62 812-3456-7890",
+  telp: "+62 812-3456-7890",
   location: "Jakarta Selatan, Indonesia",
   bio: "Pengusaha kuliner lokal yang sedang merintis.",
 };
@@ -89,7 +89,7 @@ function StatCard({
   };
   const isPositive = trend === "up";
   return (
-    <div className="p-5 bg-white border shadow-sm card card-hover rounded-3xl border-slate-100 transition-all duration-300">
+    <div className="p-5 transition-all duration-300 bg-white border shadow-sm card card-hover rounded-3xl border-slate-100">
       <div className="flex items-start justify-between mb-4">
         <div
           className={`w-12 h-12 rounded-2xl flex items-center justify-center ${colorMap[color]}`}
@@ -116,6 +116,12 @@ function StatCard({
 function EditProfileModal({ isOpen, onClose, userData, onSave }) {
   const [formData, setFormData] = useState(userData);
 
+  useEffect(() => {
+    if (isOpen) {
+      setFormData(userData);
+    }
+  }, [isOpen, userData]);
+
   if (!isOpen) return null;
 
   return (
@@ -137,7 +143,7 @@ function EditProfileModal({ isOpen, onClose, userData, onSave }) {
             </label>
             <input
               type="text"
-              value={formData.name}
+              value={formData.name || ""}
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
@@ -147,10 +153,10 @@ function EditProfileModal({ isOpen, onClose, userData, onSave }) {
               No Telfon
             </label>
             <input
-              type="phone"
-              value={formData.phone}
+              type="tel"
+              value={formData.telp || ""}
               onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
+                setFormData({ ...formData, telp: e.target.value })
               }
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none transition-all"
             />
@@ -159,9 +165,9 @@ function EditProfileModal({ isOpen, onClose, userData, onSave }) {
             </label>
             <input
               type="text"
-              value={formData.location}
+              value={formData.location || ""}
               onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
+                setFormData({ ...formData, location: e.target.value })
               }
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none transition-all"
             />
@@ -510,7 +516,7 @@ function EditReviewModal({ isOpen, onClose, reviewData, onSave }) {
         </div>
         <div className="p-5 space-y-4 text-sm">
           <div>
-            <label className="block text-slate-700 font-medium mb-2">
+            <label className="block mb-2 font-medium text-slate-700">
               Rating untuk{" "}
               <span className="font-bold text-slate-900">
                 {reviewData.merchantName}
@@ -577,10 +583,10 @@ function EditReviewModal({ isOpen, onClose, reviewData, onSave }) {
 // --- MAIN DASHBOARD ---
 
 export default function UserDashboard() {
-  const { user } = useAuth();
+  const { user, updateProfile } = useAuth();
 
   // States
-  const [userData, setUserData] = useState(initialUserData);
+  const [userData, setUserData] = useState(user || initialUserData);
   const [adsData, setAdsData] = useState(initialAds);
   const [reviewData, setReviewData] = useState(initialMerchantReview);
 
@@ -597,7 +603,25 @@ export default function UserDashboard() {
   const [pendingBudget, setPendingBudget] = useState("");
 
   // Handlers
-  const handleSaveProfile = (newData) => setUserData(newData);
+  useEffect(() => {
+    if (user) {
+      setUserData(user);
+    }
+  }, [user]);
+
+  const handleSaveProfile = (newData) => {
+    const updateResult = updateProfile(newData);
+
+    if (updateResult?.ok) {
+      setUserData(updateResult.user);
+      return;
+    }
+
+    setUserData((prev) => ({
+      ...prev,
+      ...newData,
+    }));
+  };
   const handleSaveReview = (updatedReview) => setReviewData(updatedReview);
 
   const handleInitiateNewAd = () => {
@@ -642,7 +666,6 @@ export default function UserDashboard() {
         >
           <ArrowLeft size={16} /> Kembali
         </button>
-        
       </nav>
 
       <div className="p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto">
@@ -669,9 +692,9 @@ export default function UserDashboard() {
 
         {/* Analytics Section - Rendered conditionally (Initial Hidden) */}
         {selectedAnalyticsAd && (
-          <div className="mb-8 animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="mb-8 duration-300 animate-in fade-in slide-in-from-top-4">
             {/* Interactive Analysis Title Bar */}
-            <div className="flex items-center justify-between mb-4 bg-white border border-slate-100 rounded-2xl px-5 py-3 shadow-sm">
+            <div className="flex items-center justify-between px-5 py-3 mb-4 bg-white border shadow-sm border-slate-100 rounded-2xl">
               <span className="text-sm font-bold text-slate-700">
                 Analisis: "{selectedAnalyticsAd.title}"
               </span>
@@ -753,11 +776,11 @@ export default function UserDashboard() {
                 </div>
                 <div className="flex items-center gap-3 pb-3 text-sm border-b text-slate-600 border-slate-50">
                   <Phone size={16} className="text-slate-400" />
-                  <span>{userData.phone}</span>
+                  <span>{userData.telp || "-"}</span>
                 </div>
                 <div className="flex items-center gap-3 pb-3 text-sm border-b text-slate-600 border-slate-50">
                   <MapPin size={16} className="text-slate-400" />
-                  <span>{userData.location}</span>
+                  <span>{userData.location || "-"}</span>
                 </div>
               </div>
 
@@ -780,9 +803,9 @@ export default function UserDashboard() {
                 </p>
               </div>
 
-              <div className="bg-slate-50/70 border border-slate-100 rounded-2xl p-4">
+              <div className="p-4 border bg-slate-50/70 border-slate-100 rounded-2xl">
                 <div className="flex items-start justify-between gap-2 mb-2">
-                  <h4 className="font-bold text-sm text-slate-800 truncate">
+                  <h4 className="text-sm font-bold truncate text-slate-800">
                     {reviewData.merchantName}
                   </h4>
                   <span className="text-[10px] text-slate-400 font-medium flex-shrink-0">
@@ -809,7 +832,7 @@ export default function UserDashboard() {
                   </button>
                 </div>
 
-                <p className="text-xs leading-relaxed text-slate-600 italic">
+                <p className="text-xs italic leading-relaxed text-slate-600">
                   "{reviewData.comment}"
                 </p>
               </div>

@@ -4,6 +4,7 @@ import {
   Mail,
   Lock,
   User,
+  Phone,
   ChevronRight,
   Eye,
   EyeOff,
@@ -22,22 +23,55 @@ export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, register } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     setLoading(true);
     await new Promise((r) => setTimeout(r, 800));
-    login(email, password, tab === "login" ? "merchant" : role);
+
+    if (tab === "login") {
+      const authenticatedUser = login(email, password);
+      setLoading(false);
+
+      if (!authenticatedUser) {
+        setError("Email atau password tidak cocok dengan data user.");
+        return;
+      }
+
+      if (authenticatedUser.role === "admin") {
+        navigate("/dashboard/admin");
+        return;
+      }
+
+      if (authenticatedUser.role === "merchant") {
+        navigate("/claim");
+        return;
+      }
+
+      navigate("/");
+      return;
+    }
+
+    const registerResult = register({ email, password, name, role, phone });
     setLoading(false);
 
-    if (role === "user" || tab == "login") {
-      navigate("/");
-    } else {
-      navigate("/claim");
+    if (!registerResult.ok) {
+      setError(registerResult.error || "Pendaftaran gagal. Silakan coba lagi.");
+      return;
     }
+
+    if (registerResult.user.role === "merchant") {
+      navigate("/claim");
+      return;
+    }
+
+    navigate("/");
   };
 
   const features = [
@@ -231,6 +265,32 @@ export default function Auth() {
                   <option value="merchant">Pemilik Bisnis / Merchant</option>
                   <option value="user">Pengguna Umum</option>
                 </select>
+              </div>
+            )}
+
+            {tab === "register" && (
+              <div>
+                <label className="label-base" htmlFor="auth-phone">
+                  Nomor HP
+                </label>
+                <div className="relative">
+                  <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    id="auth-phone"
+                    type="tel"
+                    placeholder="08xxxxxxxxxx"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    required
+                    className="pl-10 input-base"
+                  />
+                </div>
+              </div>
+            )}
+
+            {error && (
+              <div className="px-4 py-3 text-sm text-red-700 border border-red-200 rounded-xl bg-red-50">
+                {error}
               </div>
             )}
 

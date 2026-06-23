@@ -36,6 +36,10 @@ import {
 import DashboardLayout from "../../layouts/DashboardLayout";
 import { useAuth } from "../../context/AuthContext";
 import { reviews, merchants } from "../../data/data";
+import {
+  getMerchantProfile,
+  saveMerchantProfile,
+} from "../../data/merchantProfiles";
 import StarRating from "../../components/StarRating";
 
 const sentimentData = [
@@ -564,19 +568,28 @@ function QuickActions({ onEditProfile }) {
 export default function MerchantDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const merchantStorageKey = user?.email || "default-merchant";
 
   // Local state initialized with dummy data so the saved info can change dynamically
   const [currentMerchant, setCurrentMerchant] = useState(merchants[0]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  useEffect(() => {
+    setCurrentMerchant(getMerchantProfile(merchantStorageKey));
+  }, [merchantStorageKey]);
+
   const merchantReviews = reviews.filter((r) => r.merchantId === "1");
 
   const handleSaveProfile = (updatedData) => {
-    setCurrentMerchant((prev) => ({
-      ...prev,
-      ...updatedData,
-    }));
-    console.log("Data Berhasil Disimpan:", updatedData);
+    setCurrentMerchant((prev) => {
+      const updatedMerchant = {
+        ...prev,
+        ...updatedData,
+      };
+
+      saveMerchantProfile(merchantStorageKey, updatedMerchant);
+      return updatedMerchant;
+    });
   };
 
   return (
