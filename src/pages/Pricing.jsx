@@ -118,7 +118,8 @@ function PlanCard({ plan }) {
       navigate("/auth");
     } else {
       // Jika sudah login, lanjutkan ke halaman pembayaran sesuai slug paket
-      const targetPath = plan.slug === "banner" ? "/payment?plan=banner" : `/payment?plan=${plan.slug}`;
+      const targetPath =
+        plan.slug === "banner" ? "/banner-ads" : `/payment?plan=${plan.slug}`;
       navigate(targetPath);
     }
   };
@@ -220,7 +221,7 @@ export default function Pricing() {
   const adsPlans = plans.filter((p) => p.slug === "banner");
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="min-h-screen bg-white">
       {/* Navbar Minimalis */}
       <nav className="w-full bg-white border-b border-slate-100 px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between sticky top-0 z-40 shadow-sm backdrop-blur-md bg-white/80">
         <button
@@ -237,18 +238,18 @@ export default function Pricing() {
       {/* Hero Section */}
 
       {/* Content Section */}
-      <div className="max-w-7xl mx-auto flex flex-col items-center px-4 sm:px-6 py-12 space-y-16">
+      <div className="flex flex-col items-center px-4 py-12 mx-auto space-y-16 max-w-7xl sm:px-6">
         {/* Merchant Section */}
         <section className="">
-          <div className="border-b border-slate-100 mb-8 bg-white p-4 rounded-xl">
+          <div className="p-4 mb-8 bg-white border-b border-slate-100 rounded-xl">
             <h2 className="text-2xl font-black text-slate-900">
               Merchant Plans
             </h2>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="mt-1 text-sm text-slate-500">
               Opsi pengelolaan lapak dan profil bisnis reguler Anda.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+          <div className="grid items-stretch grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {merchantPlans.map((plan) => (
               <PlanCard key={plan.title} plan={plan} />
             ))}
@@ -257,13 +258,13 @@ export default function Pricing() {
 
         {/* Ads Section */}
         <section>
-          <div className="border-b border-slate-100 pb-4 mb-8">
+          <div className="pb-4 mb-8 border-b border-slate-100">
             <h2 className="text-2xl font-black text-slate-900">Ads Section</h2>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="mt-1 text-sm text-slate-500">
               Maksimalkan visibilitas brand dengan penempatan iklan premium.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+          <div className="grid items-stretch grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {adsPlans.map((plan) => (
               <PlanCard key={plan.title} plan={plan} />
             ))}
