@@ -335,34 +335,80 @@ function Step3() {
     </div>
   );
 }
+import  {  useEffect } from 'react';
+ 
+  // Pastikan import icon sesuai projekmu
 
 function SuccessScreen() {
+  const [isVerified, setIsVerified] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    // 1. Mulai animasi loading bar (mengubah width dari 0% ke 100%)
+    const startLoading = setTimeout(() => {
+      setProgress(100);
+    }, 100);
+
+    // 2. Setelah 3 detik (3000ms + buffer 100ms), ubah status menjadi terverifikasi
+    const VerificationTimer = setTimeout(() => {
+      setIsVerified(true);
+    }, 3100);
+
+    return () => {
+      clearTimeout(startLoading);
+      clearTimeout(VerificationTimer);
+    };
+  }, []);
+
   return (
-    <div className="py-8 text-center animate-fade-in">
+    // Ditambahkan 'relative' dan 'overflow-hidden' agar loading bar rapi di atas kontainer
+    <div className="relative py-8 text-center animate-fade-in overflow-hidden border border-slate-100 rounded-2xl shadow-sm bg-white">
+      
+      {/* Loading Border di Bagian Top (Hanya muncul selama 3 detik pertama) */}
+      {!isVerified && (
+        <div 
+          className="absolute top-0 left-0 h-1 bg-green-500 transition-all duration-[3000ms] ease-linear"
+          style={{ width: `${progress}%` }}
+        />
+      )}
+
       <div className="flex items-center justify-center w-24 h-24 mx-auto mb-6 bg-green-100 rounded-full">
-        <CheckCircle2 className="w-12 h-12 text-green-500" />
+        <CheckCircle2 className={`w-12 h-12 text-green-500 ${!isVerified ? 'animate-pulse' : ''}`} />
       </div>
-      <h2 className="mb-3 text-2xl font-black text-slate-900">
-        Pengajuan Terkirim! 🎉
+
+      {/* Teks Judul Dinamis */}
+      <h2 className="mb-3 text-2xl font-black text-slate-900 transition-all">
+        {isVerified ? "Terverifikasi! 🚀" : "Pengajuan Terkirim! 🎉"}
       </h2>
-      <p className="max-w-sm mx-auto mb-2 leading-relaxed text-slate-500">
-        Tim verifikasi Goleet.id akan memeriksa dokumen Anda dalam 1–3 hari
-        kerja.
+
+      {/* Teks Deskripsi Dinamis */}
+      <p className="max-w-sm mx-auto mb-2 leading-relaxed text-slate-500 min-h-[48px]">
+        {isVerified 
+          ? "Akun Anda telah berhasil diverifikasi. Silakan masuk ke dashboard Anda."
+          : "Tim verifikasi Goleet.id sedang memeriksa dokumen Anda secara otomatis..."}
       </p>
+      
       <p className="mb-8 text-sm text-slate-400">
-        Cek email Anda untuk update status verifikasi.
+        {isVerified ? "Selamat bergabung!" : "Proses ini memakan waktu sekitar 3 detik."}
       </p>
+
       <div className="flex flex-col justify-center gap-4 sm:flex-row">
         <Link to="/" className="btn-primary">
           Kembali ke Beranda
         </Link>
-        <Link to="/dashboard/merchant" className="btn-secondary">
-          Masuk ke Dashboard
-        </Link>
+        
+        {/* Tombol Dashboard hanya muncul (kondisional) setelah 3 detik */}
+        {isVerified && (
+          <Link to="/dashboard/merchant" className="btn-secondary animate-fade-in">
+            Masuk ke Dashboard
+          </Link>
+        )}
       </div>
     </div>
   );
 }
+
+ 
 
 export default function Claim() {
   const { setHasClaimedBusiness } = useAuth();
