@@ -1,19 +1,31 @@
-import { Link } from 'react-router-dom';
-import { MapPin, Phone, Mail, Camera, Globe, MessageCircle, ExternalLink } from 'lucide-react';
+import { Link } from "react-router-dom";
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Camera,
+  Globe,
+  MessageCircle,
+  ExternalLink,
+} from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { useDashboardRoute } from "../hooks/useDashboardRoute";
 
 export default function Footer() {
+  const { isLoggedIn } = useAuth();
+  const dashboardRoute = useDashboardRoute();
   const quickLinks = [
-    { label: 'Beranda', to: '/' },
-    { label: 'Cari Bisnis', to: '/search' },
-    { label: 'Kategori', to: '/search' },
-    { label: 'Event Lokal', to: '/' },
+    { label: "Beranda", to: "/" },
+    { label: "Cari Bisnis", to: "/search" },
+    { label: "Kategori", to: "/search" },
+    { label: "Event Lokal", to: "/" },
   ];
 
   const businessLinks = [
-    { label: 'Klaim Bisnis', to: '/claim' },
-    { label: 'Dashboard Merchant', to: '/dashboard/merchant' },
-    { label: 'Paket & Harga', to: '/pricing' },
-    { label: 'Panduan Verifikasi', to: '/claim' },
+    { label: "Klaim Bisnis", to: "/claim" },
+    { label: "Dashboard", to: isLoggedIn ? dashboardRoute : "/auth" },
+    { label: "Paket & Harga", to: "/pricing" },
+    { label: "Panduan Verifikasi", to: "/claim" },
   ];
 
   return (
@@ -28,13 +40,14 @@ export default function Footer() {
               </span>
             </Link>
             <p className="mb-6 text-sm leading-relaxed text-slate-400">
-              Platform direktori bisnis lokal dan B2B SaaS untuk UMKM di Purbalingga & sekitarnya. Temukan, hubungi, dan tumbuh bersama.
+              Platform direktori bisnis lokal dan B2B SaaS untuk UMKM di
+              Purbalingga & sekitarnya. Temukan, hubungi, dan tumbuh bersama.
             </p>
             <div className="flex gap-3">
               {[
-                { icon: Camera, label: 'Instagram', href: '#' },
-                { icon: Globe, label: 'Facebook', href: '#' },
-                { icon: MessageCircle, label: 'WhatsApp', href: '#' },
+                { icon: Camera, label: "Instagram", href: "#" },
+                { icon: Globe, label: "Facebook", href: "#" },
+                { icon: MessageCircle, label: "WhatsApp", href: "#" },
               ].map(({ icon: Icon, label, href }) => (
                 <a
                   key={label}
@@ -50,7 +63,9 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="mb-5 text-sm font-semibold tracking-wide text-white uppercase">Navigasi</h4>
+            <h4 className="mb-5 text-sm font-semibold tracking-wide text-white uppercase">
+              Navigasi
+            </h4>
             <ul className="space-y-3">
               {quickLinks.map((link) => (
                 <li key={link.label}>
@@ -67,7 +82,9 @@ export default function Footer() {
 
           {/* For Business */}
           <div>
-            <h4 className="mb-5 text-sm font-semibold tracking-wide text-white uppercase">Untuk Bisnis</h4>
+            <h4 className="mb-5 text-sm font-semibold tracking-wide text-white uppercase">
+              Untuk Bisnis
+            </h4>
             <ul className="space-y-3">
               {businessLinks.map((link) => (
                 <li key={link.label}>
@@ -84,21 +101,32 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="mb-5 text-sm font-semibold tracking-wide text-white uppercase">Kontak</h4>
+            <h4 className="mb-5 text-sm font-semibold tracking-wide text-white uppercase">
+              Kontak
+            </h4>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-primary-400 mt-0.5 flex-shrink-0" />
-                <span className="text-sm text-slate-400">Kampus Blater, Jalan Mayor Jenderal Sungkono KM 5, Kalimanah, Purbalingga, Jawa Tengah</span>
+                <span className="text-sm text-slate-400">
+                  Kampus Blater, Jalan Mayor Jenderal Sungkono KM 5, Kalimanah,
+                  Purbalingga, Jawa Tengah
+                </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="flex-shrink-0 w-4 h-4 text-primary-400" />
-                <a href="tel:+6281804208860" className="text-sm transition-colors text-slate-400 hover:text-white">
+                <a
+                  href="tel:+6281804208860"
+                  className="text-sm transition-colors text-slate-400 hover:text-white"
+                >
                   +62 818-0420-8860
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="flex-shrink-0 w-4 h-4 text-primary-400" />
-                <a href="mailto:hello@goleet.id" className="text-sm transition-colors text-slate-400 hover:text-white">
+                <a
+                  href="mailto:hello@goleet.id"
+                  className="text-sm transition-colors text-slate-400 hover:text-white"
+                >
                   hello@goleet.id
                 </a>
               </li>
@@ -109,12 +137,28 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="flex flex-col items-center justify-between gap-4 pt-8 mt-12 border-t border-slate-800 sm:flex-row">
           <p className="text-xs text-slate-500">
-            © 2026 Goleet.id — Platform UMKM Lokal Purbalingga. Semua hak dilindungi.
+            © 2026 Goleet.id — Platform UMKM Lokal Purbalingga. Semua hak
+            dilindungi.
           </p>
           <div className="flex gap-6">
-            <a href="#" className="text-xs transition-colors text-slate-500 hover:text-slate-300">Privasi</a>
-            <a href="#" className="text-xs transition-colors text-slate-500 hover:text-slate-300">Ketentuan Layanan</a>
-            <a href="#" className="text-xs transition-colors text-slate-500 hover:text-slate-300">Sitemap</a>
+            <a
+              href="#"
+              className="text-xs transition-colors text-slate-500 hover:text-slate-300"
+            >
+              Privasi
+            </a>
+            <a
+              href="#"
+              className="text-xs transition-colors text-slate-500 hover:text-slate-300"
+            >
+              Ketentuan Layanan
+            </a>
+            <a
+              href="#"
+              className="text-xs transition-colors text-slate-500 hover:text-slate-300"
+            >
+              Sitemap
+            </a>
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Building2,
@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { categories } from "../data/data";
 import { useAuth } from "../context/AuthContext";
+import { getDashboardRoute } from "../hooks/useDashboardRoute";
 
 const STEPS = [
   { id: 1, label: "Info Bisnis", icon: Building2 },
@@ -36,7 +37,7 @@ function StepIndicator({ current }) {
                   done
                     ? "bg-green-500 shadow-lg"
                     : active
-                      ? "bg-primary-600 shadow-glow-blue shadow-lg"
+                      ? "bg-primary-600 shadow-lg"
                       : "bg-surface-200"
                 }`}
               >
@@ -335,11 +336,8 @@ function Step3() {
     </div>
   );
 }
-import  {  useEffect } from 'react';
- 
-  // Pastikan import icon sesuai projekmu
 
-function SuccessScreen() {
+function SuccessScreen({ dashboardRoute }) {
   const [isVerified, setIsVerified] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -363,17 +361,18 @@ function SuccessScreen() {
   return (
     // Ditambahkan 'relative' dan 'overflow-hidden' agar loading bar rapi di atas kontainer
     <div className="relative py-8 text-center animate-fade-in overflow-hidden border border-slate-100 rounded-2xl shadow-sm bg-white">
-      
       {/* Loading Border di Bagian Top (Hanya muncul selama 3 detik pertama) */}
       {!isVerified && (
-        <div 
+        <div
           className="absolute top-0 left-0 h-1 bg-green-500 transition-all duration-[3000ms] ease-linear"
           style={{ width: `${progress}%` }}
         />
       )}
 
       <div className="flex items-center justify-center w-24 h-24 mx-auto mb-6 bg-green-100 rounded-full">
-        <CheckCircle2 className={`w-12 h-12 text-green-500 ${!isVerified ? 'animate-pulse' : ''}`} />
+        <CheckCircle2
+          className={`w-12 h-12 text-green-500 ${!isVerified ? "animate-pulse" : ""}`}
+        />
       </div>
 
       {/* Teks Judul Dinamis */}
@@ -383,23 +382,25 @@ function SuccessScreen() {
 
       {/* Teks Deskripsi Dinamis */}
       <p className="max-w-sm mx-auto mb-2 leading-relaxed text-slate-500 min-h-[48px]">
-        {isVerified 
+        {isVerified
           ? "Akun Anda telah berhasil diverifikasi. Silakan masuk ke dashboard Anda."
           : "Tim verifikasi Goleet.id sedang memeriksa dokumen Anda secara otomatis..."}
       </p>
-      
+
       <p className="mb-8 text-sm text-slate-400">
-        {isVerified ? "Selamat bergabung!" : "Proses ini memakan waktu sekitar 3 detik."}
+        {isVerified
+          ? "Selamat bergabung!"
+          : "Proses ini memakan waktu sekitar 3 detik."}
       </p>
 
       <div className="flex flex-col justify-center gap-4 sm:flex-row">
         <Link to="/" className="btn-primary">
           Kembali ke Beranda
         </Link>
-        
+
         {/* Tombol Dashboard hanya muncul (kondisional) setelah 3 detik */}
         {isVerified && (
-          <Link to="/dashboard/merchant" className="btn-secondary animate-fade-in">
+          <Link to={dashboardRoute} className="btn-secondary animate-fade-in">
             Masuk ke Dashboard
           </Link>
         )}
@@ -408,10 +409,9 @@ function SuccessScreen() {
   );
 }
 
- 
-
 export default function Claim() {
-  const { setHasClaimedBusiness, promoteToRegisteredMerchant } = useAuth();
+  const { user, setHasClaimedBusiness, promoteToRegisteredMerchant } =
+    useAuth();
   const [step, setStep] = useState(1);
   const [done, setDone] = useState(false);
   const [formData, setFormData] = useState({
@@ -429,6 +429,8 @@ export default function Claim() {
 
   const updateField = (key, value) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
+
+  const dashboardRoute = getDashboardRoute(user?.role);
 
   const handleNext = () => {
     if (step < 3) setStep(step + 1);
@@ -453,7 +455,7 @@ export default function Claim() {
 
         <div className="p-6 card sm:p-10">
           {done ? (
-            <SuccessScreen />
+            <SuccessScreen dashboardRoute={dashboardRoute} />
           ) : (
             <>
               <div className="mb-8 text-center">

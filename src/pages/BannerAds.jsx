@@ -1,15 +1,13 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
-  BadgeCheck,
   CreditCard,
   ImagePlus,
   Megaphone,
   ReceiptText,
   Sparkles,
 } from "lucide-react";
-import { useBanner } from "../hooks/useBanner";
 
 const gradientOptions = [
   {
@@ -44,41 +42,17 @@ function SummaryRow({
   return (
     <div className="flex items-center justify-between gap-4 py-3 border-b border-surface-100 last:border-b-0">
       <span className={labelClassName}>{label}</span>
-      <span className={strong ? "text-sm font-bold text-white" : valueClassName}>
+      <span
+        className={strong ? "text-sm font-bold text-white" : valueClassName}
+      >
         {value}
       </span>
     </div>
   );
 }
 
-function SuccessScreen() {
-  return (
-    <div className="p-8 text-center bg-white shadow-xl rounded-3xl">
-      <div className="flex items-center justify-center w-20 h-20 mx-auto mb-6 rounded-full bg-green-100">
-        <BadgeCheck className="w-10 h-10 text-green-600" />
-      </div>
-      <h1 className="text-3xl font-black text-slate-900">
-        Pengajuan Banner Terkirim
-      </h1>
-      <p className="max-w-lg mx-auto mt-4 text-sm leading-relaxed text-slate-500">
-        Tim Goleet akan memverifikasi pembayaran dan materi banner Anda. Setelah
-        disetujui admin, banner akan siap dijadwalkan tayang di carousel utama.
-      </p>
-      <div className="flex flex-col justify-center gap-3 mt-8 sm:flex-row">
-        <Link to="/" className="btn-primary">
-          Kembali ke Beranda
-        </Link>
-        <Link to="/pricing" className="btn-secondary">
-          Lihat Paket Lain
-        </Link>
-      </div>
-    </div>
-  );
-}
-
 export default function BannerAds() {
-  const { submitBannerRequest } = useBanner();
-  const [done, setDone] = useState(false);
+  const navigate = useNavigate();
   const [bannerImageName, setBannerImageName] = useState("");
   const [paymentProofName, setPaymentProofName] = useState("");
   const [formData, setFormData] = useState({
@@ -92,7 +66,6 @@ export default function BannerAds() {
     image:
       "https://images.unsplash.com/photo-1522204523234-8729aa6e3d5f?w=1200&q=80",
     bg: gradientOptions[0].value,
-    paymentMethod: "Transfer Bank BCA",
   });
 
   const updateField = (key, value) =>
@@ -116,24 +89,19 @@ export default function BannerAds() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    submitBannerRequest({
-      ...formData,
-      bannerImageName,
-      paymentProofName,
-      paymentStatus: "pending",
-    });
-    setDone(true);
-  };
 
-  if (done) {
-    return (
-      <div className="min-h-screen pt-24 pb-16 bg-surface-50">
-        <div className="max-w-3xl px-4 mx-auto sm:px-6">
-          <SuccessScreen />
-        </div>
-      </div>
-    );
-  }
+    navigate("/payment?plan=banner", {
+      state: {
+        flowType: "banner",
+        bannerRequestData: {
+          ...formData,
+          bannerImageName,
+          paymentProofName,
+          paymentStatus: "pending",
+        },
+      },
+    });
+  };
 
   return (
     <div className="min-h-screen pt-16 bg-surface-50">
@@ -203,7 +171,10 @@ export default function BannerAds() {
 
       <section className="py-14">
         <div className="grid max-w-6xl gap-8 px-4 mx-auto lg:grid-cols-[1.15fr_0.85fr] sm:px-6">
-          <form onSubmit={handleSubmit} className="p-6 bg-white shadow-lg rounded-3xl sm:p-8">
+          <form
+            onSubmit={handleSubmit}
+            className="p-6 bg-white shadow-lg rounded-3xl sm:p-8"
+          >
             <div className="flex items-center gap-3 mb-8">
               <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-primary-600 shadow-glow-blue">
                 <Sparkles className="w-5 h-5 text-white" />
@@ -227,10 +198,11 @@ export default function BannerAds() {
                   id="banner-business-name"
                   type="text"
                   value={formData.advertiserName}
-                  onChange={(e) => updateField("advertiserName", e.target.value)}
+                  onChange={(e) =>
+                    updateField("advertiserName", e.target.value)
+                  }
                   className="input-base"
                   placeholder="cth: FitZone Purbalingga"
-                  required
                 />
               </div>
               <div>
@@ -241,10 +213,11 @@ export default function BannerAds() {
                   id="banner-email"
                   type="email"
                   value={formData.advertiserEmail}
-                  onChange={(e) => updateField("advertiserEmail", e.target.value)}
+                  onChange={(e) =>
+                    updateField("advertiserEmail", e.target.value)
+                  }
                   className="input-base"
                   placeholder="promo@brand.id"
-                  required
                 />
               </div>
               <div>
@@ -255,10 +228,11 @@ export default function BannerAds() {
                   id="banner-phone"
                   type="tel"
                   value={formData.advertiserPhone}
-                  onChange={(e) => updateField("advertiserPhone", e.target.value)}
+                  onChange={(e) =>
+                    updateField("advertiserPhone", e.target.value)
+                  }
                   className="input-base"
                   placeholder="08xxxxxxxxxx"
-                  required
                 />
               </div>
               <div>
@@ -272,7 +246,6 @@ export default function BannerAds() {
                   onChange={(e) => updateField("cta", e.target.value)}
                   className="input-base"
                   placeholder="Lihat Promo"
-                  required
                 />
               </div>
             </div>
@@ -288,7 +261,6 @@ export default function BannerAds() {
                 onChange={(e) => updateField("title", e.target.value)}
                 className="input-base"
                 placeholder="Grand Opening FitZone Purbalingga"
-                required
               />
             </div>
 
@@ -303,7 +275,6 @@ export default function BannerAds() {
                 onChange={(e) => updateField("subtitle", e.target.value)}
                 className="resize-none input-base"
                 placeholder="Potongan membership dan bonus personal trainer untuk pendaftar awal."
-                required
               />
             </div>
 
@@ -318,11 +289,10 @@ export default function BannerAds() {
                 onChange={(e) => updateField("description", e.target.value)}
                 className="resize-none input-base"
                 placeholder="Ceritakan tujuan campaign, periode tayang, dan konteks promo."
-                required
               />
             </div>
 
-            <div className="grid grid-cols-1 gap-5 mt-5 sm:grid-cols-2">
+            <div className="flex flex-col w-full gap-5 mt-5 sm:grid-cols-2">
               <div>
                 <label className="label-base" htmlFor="banner-gradient">
                   Overlay Gradient
@@ -340,24 +310,9 @@ export default function BannerAds() {
                   ))}
                 </select>
               </div>
-              <div>
-                <label className="label-base" htmlFor="banner-payment-method">
-                  Metode Pembayaran
-                </label>
-                <select
-                  id="banner-payment-method"
-                  value={formData.paymentMethod}
-                  onChange={(e) => updateField("paymentMethod", e.target.value)}
-                  className="input-base"
-                >
-                  <option>Transfer Bank BCA</option>
-                  <option>VA Mandiri</option>
-                  <option>QRIS Bisnis</option>
-                </select>
-              </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-5 mt-6 sm:grid-cols-2">
+            <div className="flex flex-col gap-5 mt-6 sm:grid-cols-2 w-full">
               <div>
                 <label className="label-base" htmlFor="banner-image-upload">
                   Upload Gambar Banner
@@ -379,33 +334,6 @@ export default function BannerAds() {
                     accept="image/*"
                     className="hidden"
                     onChange={handleBannerImageChange}
-                    required
-                  />
-                </label>
-              </div>
-
-              <div>
-                <label className="label-base" htmlFor="banner-payment-proof">
-                  Upload Bukti Pembayaran
-                </label>
-                <label
-                  htmlFor="banner-payment-proof"
-                  className="flex flex-col items-center justify-center p-5 text-center transition-all border-2 border-dashed rounded-2xl cursor-pointer border-surface-200 bg-surface-50 hover:border-primary-400 hover:bg-primary-50"
-                >
-                  <ReceiptText className="w-8 h-8 mb-3 text-slate-400" />
-                  <p className="text-sm font-semibold text-slate-700">
-                    {paymentProofName || "Pilih file bukti pembayaran"}
-                  </p>
-                  <p className="mt-1 text-xs text-slate-400">
-                    Bisa screenshot transfer atau bukti QRIS
-                  </p>
-                  <input
-                    id="banner-payment-proof"
-                    type="file"
-                    accept="image/*,.pdf"
-                    className="hidden"
-                    onChange={handlePaymentProofChange}
-                    required
                   />
                 </label>
               </div>
@@ -417,7 +345,7 @@ export default function BannerAds() {
                 terlebih dahulu sebelum tayang.
               </p>
               <button type="submit" className="btn-primary">
-                Kirim Pengajuan Banner
+                Lanjut ke Pembayaran
               </button>
             </div>
           </form>
@@ -429,7 +357,9 @@ export default function BannerAds() {
                   <CreditCard className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900">Informasi Pembayaran</h3>
+                  <h3 className="font-bold text-slate-900">
+                    Informasi Pembayaran
+                  </h3>
                   <p className="text-sm text-slate-500">
                     Biaya placement banner satu kali pengajuan
                   </p>
@@ -461,7 +391,8 @@ export default function BannerAds() {
                 <div className="absolute inset-0 flex items-center px-6">
                   <div className="max-w-sm text-white">
                     <h3 className="text-2xl font-black">
-                      {formData.title || "Judul banner Anda akan tampil di sini"}
+                      {formData.title ||
+                        "Judul banner Anda akan tampil di sini"}
                     </h3>
                     <p className="mt-2 text-sm text-white/80">
                       {formData.subtitle ||
