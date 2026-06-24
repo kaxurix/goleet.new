@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   MapPin,
-  Phone,
   Clock,
   Tag,
   MessageCircle,
@@ -11,14 +10,13 @@ import {
   ChevronLeft,
   Share2,
   Heart,
-  Image,
 } from "lucide-react";
 import StarRating from "../components/StarRating";
 import { VerifiedBadge, PremiumBadge } from "../components/Badge";
+import { useAuth } from "../context/AuthContext";
 import { merchants, reviews } from "../data/data";
 
 function AIReviewWidget({ summary }) {
-  const [allReviews, setAllReviews] = useState(reviews);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 600);
@@ -126,6 +124,8 @@ function ReviewCard({ review }) {
 
 export default function MerchantDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { isLoggedIn, user } = useAuth();
   const [activeTab, setActiveTab] = useState("info");
   const [liked, setLiked] = useState(false);
 
@@ -135,7 +135,7 @@ export default function MerchantDetail() {
   const [allReviews, setAllReviews] = useState(reviews);
 
   const merchant = merchants.find((m) => m.id === id) || merchants[0];
-  const merchantReviews = reviews.filter((r) => r.merchantId === merchant.id);
+  const merchantReviews = allReviews.filter((r) => r.merchantId === merchant.id);
 
   const tabs = [
     { id: "info", label: "Informasi" },
@@ -149,6 +149,12 @@ export default function MerchantDetail() {
 
   const handleReviewSubmit = (e) => {
     e.preventDefault();
+
+    if (!isLoggedIn || !user) {
+      navigate("/auth");
+      return;
+    }
+
     if (newReviewRating === 0) {
       alert("Silakan pilih rating terlebih dahulu!");
       return;
@@ -158,7 +164,24 @@ export default function MerchantDetail() {
       return;
     }
 
-    setAllReviews((prev) => [...prev]);
+    const reviewDate = new Intl.DateTimeFormat("id-ID", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(new Date());
+
+    const newReview = {
+      id: `review-${Date.now()}`,
+      merchantId: merchant.id,
+      author: user.name,
+      avatar: user.avatar || "https://i.pravatar.cc/40?img=12",
+      rating: newReviewRating,
+      date: reviewDate,
+      text: newReviewText.trim(),
+      helpful: 0,
+    };
+
+    setAllReviews((prev) => [newReview, ...prev]);
     setNewReviewText("");
     setNewReviewRating(0);
   };

@@ -11,6 +11,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useDashboardRoute } from "../hooks/useDashboardRoute";
 import { categories } from "../data/data";
 
 export default function Navbar() {
@@ -55,12 +56,7 @@ export default function Navbar() {
     user?.role === "admin" ||
     user?.role === "user" ||
     user?.role === "registered-merchant";
-  const dashboardPath =
-    user?.role === "admin"
-      ? "/dashboard/admin"
-      : user?.role === "registered-merchant"
-        ? "/dashboard/merchant"
-        : "/dashboard/user";
+  const dashboardPath = useDashboardRoute();
 
   const bgClass = isLanding
     ? scrolled

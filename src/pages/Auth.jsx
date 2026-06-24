@@ -15,6 +15,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { getDashboardRoute } from "../hooks/useDashboardRoute";
 
 export default function Auth() {
   const [tab, setTab] = useState("login");
@@ -44,17 +45,12 @@ export default function Auth() {
         return;
       }
 
-      if (authenticatedUser.role === "admin") {
-        navigate("/dashboard/admin");
-        return;
-      }
-
       if (authenticatedUser.role === "merchant") {
         navigate("/claim");
         return;
       }
 
-      navigate("/");
+      navigate(getDashboardRoute(authenticatedUser.role));
       return;
     }
 
@@ -71,7 +67,7 @@ export default function Auth() {
       return;
     }
 
-    navigate("/");
+    navigate(getDashboardRoute(registerResult.user.role));
   };
 
   const features = [
